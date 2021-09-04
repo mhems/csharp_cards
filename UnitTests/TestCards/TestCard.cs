@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace CardsTests
+namespace TestCards
 {
     [TestClass]
     public class TestCard

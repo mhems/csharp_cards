@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Cards;
 
-namespace CardsTests
+namespace TestCards
 {
     [TestClass]
     public class TestHand
