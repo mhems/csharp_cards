@@ -15,7 +15,8 @@ namespace Cards
         public int CutIndex { get; set; }
         public int Index { get; private set; }
         public int Count => cards.Count;
-        public bool IsExhausted => Index >= CutIndex;
+        public bool IsExhausted => NumCardsRemaining == 0;
+        public int NumCardsRemaining => CutIndex - Index;
 
         public event EventHandler Shuffling;
         public event EventHandler Exhausted;

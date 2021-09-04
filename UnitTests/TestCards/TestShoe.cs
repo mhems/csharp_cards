@@ -71,17 +71,20 @@ namespace TestCards
         }
 
         [TestMethod]
-        public void TestDeal()
+        public void TestDeckDeal()
         {
             Shoe deck = new();
+            Assert.AreEqual(52, deck.NumCardsRemaining);
 
             Card[] cards = deck.Deal(1);
+            Assert.AreEqual(51, deck.NumCardsRemaining);
             Assert.AreEqual(1, cards.Length);
             Assert.AreEqual(52, deck.Count);
             Assert.AreEqual(1, deck.Index);
             Assert.IsFalse(deck.IsExhausted);
 
             cards = deck.Deal(5);
+            Assert.AreEqual(46, deck.NumCardsRemaining);
             Assert.AreEqual(5, cards.Length);
             Assert.AreEqual(52, deck.Count);
             Assert.AreEqual(6, deck.Index);
@@ -91,6 +94,7 @@ namespace TestCards
             deck.Exhausted += ExhaustedHandler;
             deck.Shuffling += ShuffleHandler;
             cards = deck.Deal(46);
+            Assert.AreEqual(0, deck.NumCardsRemaining);
             Assert.AreEqual(46, cards.Length);
             Assert.IsTrue(gotDealtEvent);
             Assert.IsFalse(gotExhaustedEvent);
@@ -104,11 +108,34 @@ namespace TestCards
             deck.Dealt -= DealtHandler;
 
             cards = deck.Deal(1);
+            Assert.AreEqual(51, deck.NumCardsRemaining);
             Assert.AreEqual(1, cards.Length);
             Assert.IsTrue(gotShuffleEvent);
             Assert.IsTrue(gotExhaustedEvent);
             Assert.AreEqual(1, deck.Index);
             Assert.IsFalse(deck.IsExhausted);
+        }
+
+        [TestMethod]
+        public void TestShoeDeal()
+        {
+            Shoe shoe = new (6);
+            Assert.AreEqual(6 * 52, shoe.NumCardsRemaining);
+            shoe.Exhausted += ExhaustedHandler;
+            shoe.Shuffling += ShuffleHandler;
+
+            Card[] cards = shoe.Deal(104);
+            Assert.AreEqual(6 * 52 - 104, shoe.NumCardsRemaining);
+            Assert.AreEqual(104, cards.Length);
+            Assert.IsFalse(shoe.IsExhausted);
+            Assert.IsFalse(gotExhaustedEvent);
+            Assert.IsFalse(gotShuffleEvent);
+
+            cards = shoe.Deal(260);
+            Assert.AreEqual(260, shoe.NumCardsRemaining);
+            Assert.AreEqual(260, cards.Length);
+            Assert.IsTrue(gotExhaustedEvent);
+            Assert.IsTrue(gotShuffleEvent);
         }
 
         private void BurnHandler(object obj, Shoe.BurnEventArgs args)
@@ -121,11 +148,13 @@ namespace TestCards
         public void TestBurn()
         {
             Shoe deck = new();
+            Assert.AreEqual(52, deck.NumCardsRemaining);
             deck.Burnt += BurnHandler;
             deck.Exhausted += ExhaustedHandler;
             deck.Shuffling += ShuffleHandler;
 
             deck.Burn();
+            Assert.AreEqual(51, deck.NumCardsRemaining);
             Assert.AreEqual(1, deck.Index);
             Assert.AreEqual(1, numBurnt);
             Assert.IsTrue(gotBurnEvent);
@@ -134,6 +163,7 @@ namespace TestCards
 
             gotBurnEvent = false;
             deck.Burn(51);
+            Assert.AreEqual(0, deck.NumCardsRemaining);
             Assert.AreEqual(52, deck.Index);
             Assert.AreEqual(51, numBurnt);
             Assert.IsTrue(gotBurnEvent);
@@ -142,6 +172,7 @@ namespace TestCards
 
             gotBurnEvent = false;
             deck.Burn();
+            Assert.AreEqual(51, deck.NumCardsRemaining);
             Assert.AreEqual(1, deck.Index);
             Assert.AreEqual(1, numBurnt);
             Assert.IsTrue(gotBurnEvent);
@@ -194,6 +225,7 @@ namespace TestCards
         public void TestCutIndex()
         {
             Shoe deck = new();
+            Assert.AreEqual(52, deck.NumCardsRemaining);
             Assert.AreEqual(deck.Count, deck.CutIndex);
             Assert.AreEqual(0, deck.Index);
             Assert.IsFalse(deck.IsExhausted);
@@ -202,10 +234,12 @@ namespace TestCards
             deck.Shuffling += ShuffleHandler;
 
             deck.CutIndex = 48;
+            Assert.AreEqual(48, deck.NumCardsRemaining);
             Assert.IsFalse(deck.IsExhausted);
             Assert.AreEqual(0, deck.Index);
 
             Card[] cards = deck.Deal(48);
+            Assert.AreEqual(0, deck.NumCardsRemaining);
             Assert.AreEqual(48, cards.Length);
             Assert.AreEqual(48, deck.Index);
             Assert.IsTrue(deck.IsExhausted);
@@ -213,6 +247,7 @@ namespace TestCards
             Assert.IsFalse(gotShuffleEvent);
 
             Card[] secondDeal = deck.Deal(2);
+            Assert.AreEqual(46, deck.NumCardsRemaining);
             Assert.AreEqual(2, secondDeal.Length);
             Assert.AreEqual(2, deck.Index);
             Assert.AreEqual(48, deck.CutIndex);
@@ -223,12 +258,12 @@ namespace TestCards
             gotShuffleEvent = false;
             gotExhaustedEvent = false;
             Card[] thirdDeal = deck.Deal(52);
+            Assert.AreEqual(42, deck.NumCardsRemaining);
             Assert.AreEqual(52, thirdDeal.Length);
             Assert.AreEqual(48, deck.CutIndex);
             Assert.IsFalse(deck.IsExhausted);
             Assert.IsTrue(gotExhaustedEvent);
             Assert.IsTrue(gotShuffleEvent);
-
         }
     }
 }
