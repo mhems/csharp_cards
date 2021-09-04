@@ -17,9 +17,11 @@ namespace Blackjack
         public bool IsPair => (Count == 2) && (this[0].Rank == this[1].Rank);
         public bool IsBust => Value > 21;
         public bool IsBlackjack => Value == 21;
-        public bool IsNaturalBlackjack => IsBlackjack && (Count == 2) && !Split;
-        public bool Split { get; private set; } = false;
+        public bool IsNaturalBlackjack => IsBlackjack && (Count == 2) && !IsSplit;
+        public bool IsSplit { get; private set; } = false;
         #endregion
+
+        public EventHandler<SplitEventArgs> Split;
 
         public BlackjackHand()
         {
@@ -41,17 +43,19 @@ namespace Blackjack
 
             BlackjackHand leftHand = new()
             {
-                Split = true
+                IsSplit = true
             };
             leftHand.Add(this[0]);
             leftHand.Add(nextCardLeftHand);
 
             BlackjackHand rightHand = new()
             {
-                Split = true
+                IsSplit = true
             };
             rightHand.Add(this[1]);
             rightHand.Add(nextCardRightHand);
+
+            Split?.Invoke(this, new SplitEventArgs(leftHand, rightHand));
 
             return (leftHand, rightHand);
         }
@@ -99,6 +103,17 @@ namespace Blackjack
                 }
             }
             return false;
+        }
+
+        public class SplitEventArgs : EventArgs
+        {
+            public BlackjackHand LeftHand { get; private set; }
+            public BlackjackHand RightHand { get; private set; }
+            public SplitEventArgs(BlackjackHand left, BlackjackHand right)
+            {
+                LeftHand = left;
+                RightHand = right;
+            }
         }
     }
 }
