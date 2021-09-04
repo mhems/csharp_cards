@@ -7,7 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cards", "Cards\Cards.csproj
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{AF2D2A44-2899-4553-A8F0-DD72BDCA793C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCards", "UnitTests\TestCards\TestCards.csproj", "{47ADBD18-0A1A-4F9B-8D1C-6338FB41C890}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCards", "UnitTests\TestCards\TestCards.csproj", "{47ADBD18-0A1A-4F9B-8D1C-6338FB41C890}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blackjack", "Blackjack", "{F0D899F0-44A4-408C-8E05-CE5F376CBDC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack", "Blackjack\Blackjack\Blackjack.csproj", "{885DFF63-738A-4F0A-A4F3-4A3A9DA7AB26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackjackGUI", "Blackjack\BlackjackGUI\BlackjackGUI.csproj", "{69578856-C177-41CD-BA7A-EB60D8D35118}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBlackjack", "UnitTests\TestBlackjack\TestBlackjack.csproj", "{924E7310-D10C-4B30-8ADE-14EDAE11951B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +31,27 @@ Global
 		{47ADBD18-0A1A-4F9B-8D1C-6338FB41C890}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47ADBD18-0A1A-4F9B-8D1C-6338FB41C890}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47ADBD18-0A1A-4F9B-8D1C-6338FB41C890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{885DFF63-738A-4F0A-A4F3-4A3A9DA7AB26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{885DFF63-738A-4F0A-A4F3-4A3A9DA7AB26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{885DFF63-738A-4F0A-A4F3-4A3A9DA7AB26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{885DFF63-738A-4F0A-A4F3-4A3A9DA7AB26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69578856-C177-41CD-BA7A-EB60D8D35118}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69578856-C177-41CD-BA7A-EB60D8D35118}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69578856-C177-41CD-BA7A-EB60D8D35118}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69578856-C177-41CD-BA7A-EB60D8D35118}.Release|Any CPU.Build.0 = Release|Any CPU
+		{924E7310-D10C-4B30-8ADE-14EDAE11951B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{924E7310-D10C-4B30-8ADE-14EDAE11951B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{924E7310-D10C-4B30-8ADE-14EDAE11951B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{924E7310-D10C-4B30-8ADE-14EDAE11951B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{47ADBD18-0A1A-4F9B-8D1C-6338FB41C890} = {AF2D2A44-2899-4553-A8F0-DD72BDCA793C}
+		{885DFF63-738A-4F0A-A4F3-4A3A9DA7AB26} = {F0D899F0-44A4-408C-8E05-CE5F376CBDC3}
+		{69578856-C177-41CD-BA7A-EB60D8D35118} = {F0D899F0-44A4-408C-8E05-CE5F376CBDC3}
+		{924E7310-D10C-4B30-8ADE-14EDAE11951B} = {AF2D2A44-2899-4553-A8F0-DD72BDCA793C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23B08DB1-DC0F-4CCB-A24A-9C48FB1683D5}
