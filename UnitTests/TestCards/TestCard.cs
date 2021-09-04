@@ -91,5 +91,20 @@ namespace CardsTests
             Assert.AreEqual("King of Clubs", king.ToString());
             Assert.AreEqual("Ace of Hearts", ace.ToString());
         }
+
+        [TestMethod]
+        public void TestHashCode()
+        {
+            HashSet<int> hashes = new();
+            foreach (int suit in Enum.GetValues(typeof(Card.SuitEnum)))
+            {
+                foreach (int rank in Enum.GetValues(typeof(Card.RankEnum)))
+                {
+                    Card c = CardFactory.GetCard((Card.RankEnum)rank, (Card.SuitEnum)suit);
+                    hashes.Add(c.GetHashCode());
+                }
+            }
+            Assert.AreEqual(52, hashes.Count);
+        }
     }
 }

@@ -20,7 +20,6 @@ namespace Cards
         public bool IsAce => Rank == Card.RankEnum.Ace;
         public bool IsFace => !IsAce && ((int)Rank >= (int)Card.RankEnum.Jack);
         public bool IsNumeric => (int)Rank <= (int)Card.RankEnum.Ten;
-        internal int GUID => GetGUID((int)Rank, (int)Suit);
         public readonly RankEnum Rank { get; }
         public readonly SuitEnum Suit { get; }
         #endregion
@@ -36,7 +35,21 @@ namespace Cards
             return $"{Rank} of {Suit}";
         }
 
-        internal static int GetGUID(int rank, int suit)
+        public override int GetHashCode()
+        {
+            return ComputeHashCode((int)Rank, (int)Suit);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Card otherCard)
+            {
+                return GetHashCode() == otherCard.GetHashCode();
+            }
+            return false;
+        }
+
+        internal static int ComputeHashCode(int rank, int suit)
         {
             return (100 * suit) + rank;
         }
@@ -49,7 +62,7 @@ namespace Cards
 
         public static Card GetCard(Card.RankEnum rank, Card.SuitEnum suit)
         {
-            int guid = Card.GetGUID((int)rank, (int)suit);
+            int guid = Card.ComputeHashCode((int)rank, (int)suit);
             if (cardDict.ContainsKey(guid))
             {
                 return cardDict[guid];
