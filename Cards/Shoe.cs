@@ -19,8 +19,8 @@ namespace Cards
 
         public event EventHandler Shuffling;
         public event EventHandler Exhausted;
-        public event EventHandler Dealt;
-        public event EventHandler Burnt;
+        public event EventHandler<DealtEventArgs> Dealt;
+        public event EventHandler<BurnEventArgs> Burnt;
 
         public Shoe(int numDecks = 1)
         {
@@ -44,6 +44,7 @@ namespace Cards
             Index = 0;
             CutIndex = cards.Count;
             CheckForExhaustion();
+            Shuffle();
         }
 
         public Card[] Deal(int n)
@@ -61,12 +62,12 @@ namespace Cards
 
         public void Burn(int n = 1)
         {
-            for (int i = n; i >= 0; i--)
+            for (int i = 0; i < n; i++)
             {
                 CheckForExhaustion();
-                Burnt?.Invoke(this, new EventArgs());
                 Index++;
             }
+            Burnt?.Invoke(this, new BurnEventArgs(n));
         }
 
         private void CheckForExhaustion()
@@ -83,7 +84,7 @@ namespace Cards
             int k;
             Card temp;
             Shuffling?.Invoke(this, new EventArgs());
-            for (int n = cards.Count - 1; n > 0; n--)
+            for (int n = cards.Count - 1; n >= 0; n--)
             {
                 k = rng.Next(n + 1);
                 temp = cards[k];
@@ -99,6 +100,15 @@ namespace Cards
             public DealtEventArgs(Card[] cards)
             {
                 DealtCards = cards;
+            }
+        }
+
+        public class BurnEventArgs : EventArgs
+        {
+            public int NumBurnt { get; private set; }
+            public BurnEventArgs(int n)
+            {
+                NumBurnt = n;
             }
         }
     }
