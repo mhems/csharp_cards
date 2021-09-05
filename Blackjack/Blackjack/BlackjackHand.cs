@@ -78,7 +78,7 @@ namespace Blackjack
             return value;
         }
 
-        private static int CardValue(Card card)
+        internal static int CardValue(Card card)
         {
             if (card.IsAce)
             {
