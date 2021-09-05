@@ -83,5 +83,16 @@ namespace TestCards
             Assert.IsFalse(gotWithdrawEvent);
             Assert.AreEqual(0, bank.Balance);
         }
+
+        [TestMethod]
+        public void TestHouseBank()
+        {
+            Bank bank = new HouseBank(100);
+            bank.Withdraw(100);
+            Assert.AreEqual(0, bank.Balance);
+
+            bank.Withdraw(100);
+            Assert.AreEqual(-100, bank.Balance);
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace Cards
         public EventHandler<BankTransactionEventArgs> Withdrawn;
         public EventHandler<BankTransactionEventArgs> Deposited;
 
-        public int Balance { get; private set; } = 0;
+        public int Balance { get; protected set; } = 0;
 
         public Bank(int balance = 0)
         {
@@ -29,7 +29,7 @@ namespace Cards
             Balance = balance;
         }
 
-        public void Withdraw(int amount)
+        public virtual void Withdraw(int amount)
         {
             if (amount < 0)
             {
@@ -43,7 +43,7 @@ namespace Cards
             Withdrawn?.Invoke(this, new BankTransactionEventArgs(-amount, Balance));
         }
 
-        public void Deposit(int amount)
+        public virtual void Deposit(int amount)
         {
             if (amount < 0)
             {
@@ -53,6 +53,21 @@ namespace Cards
             Deposited?.Invoke(this, new BankTransactionEventArgs(amount, Balance));
         }
 
+    }
+
+    public class HouseBank : Bank
+    {
+        public HouseBank(int balance = 0) : base(balance) { }
+
+        public override void Withdraw(int amount)
+        {
+            if (amount < 0)
+            {
+                throw new ArgumentException("Cannot withdraw a negative amount");
+            }
+            Balance -= amount;
+            Withdrawn?.Invoke(this, new BankTransactionEventArgs(-amount, Balance));
+        }
     }
 
     public class BankTransactionEventArgs : EventArgs
