@@ -16,6 +16,18 @@ namespace Cards
 
         public Player(string name) : this(name, new Bank()) { }
 
+        public event EventHandler<BankTransactionEventArgs> Spent
+        {
+            add { Bank.Withdrawn += value; }
+            remove { Bank.Withdrawn -= value; }
+        }
+
+        public event EventHandler<BankTransactionEventArgs> Earned
+        {
+            add { Bank.Deposited += value; }
+            remove { Bank.Deposited -= value; }
+        }
+
         protected Player(string name, Bank bank)
         {
             Name = name;

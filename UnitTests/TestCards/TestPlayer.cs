@@ -11,6 +11,29 @@ namespace TestCards
     [TestClass]
     public class TestPlayer
     {
+        private bool spentCalled;
+        private bool earnedCalled;
+        private int amount;
+
+        private void SpentHandler(object obj, BankTransactionEventArgs args)
+        {
+            spentCalled = true;
+            amount = args.Amount;
+        }
+
+        private void EarnedHandler(object obj, BankTransactionEventArgs args)
+        {
+            earnedCalled = true;
+            amount = args.Amount;
+        }
+
+        [TestInitialize]
+        public void Setup()
+        {
+            spentCalled = false;
+            earnedCalled = false;
+        }
+
         [TestMethod]
         public void TestCtor()
         {
@@ -36,12 +59,22 @@ namespace TestCards
         public void TestPlayerBank()
         {
             Player p1 = new("Alice");
+            p1.Spent += SpentHandler;
+            p1.Earned += EarnedHandler;
 
             p1.Payout(100);
             Assert.AreEqual(100, p1.Bank.Balance);
+            Assert.IsTrue(earnedCalled);
+            Assert.IsFalse(spentCalled);
+            Assert.AreEqual(100, amount);
 
+            amount = 0;
+            earnedCalled = false;
             p1.Bet(50);
             Assert.AreEqual(50, p1.Bank.Balance);
+            Assert.IsFalse(earnedCalled);
+            Assert.IsTrue(spentCalled);
+            Assert.AreEqual(50, amount);
         }
     }
 }

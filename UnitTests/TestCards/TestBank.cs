@@ -75,7 +75,7 @@ namespace TestCards
             Assert.IsFalse(gotDepositEvent);
             Assert.IsTrue(gotWithdrawEvent);
             Assert.AreEqual(0, eventBalance);
-            Assert.AreEqual(-100, eventAmount);
+            Assert.AreEqual(100, eventAmount);
             gotWithdrawEvent = false;
 
             Assert.ThrowsException<InsufficientFundsException>(() => bank.Withdraw(5));

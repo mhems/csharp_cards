@@ -54,7 +54,7 @@ namespace Cards
                 throw new InsufficientFundsException($"Cannot withdraw ${amount} from ${Balance}");
             }
             Balance -= amount;
-            Withdrawn?.Invoke(this, new BankTransactionEventArgs(-amount, Balance));
+            Withdrawn?.Invoke(this, new BankTransactionEventArgs(amount, Balance));
             return amount;
         }
 
