@@ -29,12 +29,6 @@ namespace BlackjackGUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.playerCard2 = new System.Windows.Forms.PictureBox();
-            this.playerCard1 = new System.Windows.Forms.PictureBox();
-            this.dealerCard2 = new System.Windows.Forms.PictureBox();
-            this.dealerCard1 = new System.Windows.Forms.PictureBox();
-            this.dealerValue = new System.Windows.Forms.Label();
-            this.playerValue = new System.Windows.Forms.Label();
             this.hitButton = new System.Windows.Forms.Button();
             this.standButton = new System.Windows.Forms.Button();
             this.doubleButton = new System.Windows.Forms.Button();
@@ -42,161 +36,114 @@ namespace BlackjackGUI
             this.surrenderButton = new System.Windows.Forms.Button();
             this.betPicker = new System.Windows.Forms.NumericUpDown();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.potLabel = new System.Windows.Forms.Label();
-            this.shoeLabel = new System.Windows.Forms.Label();
-            this.stackLabel = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.playerCard2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.playerCard1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dealerCard2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dealerCard1)).BeginInit();
+            this.dealerView = new BlackjackGUI.BlackjackPlayerView();
+            this.playerView = new BlackjackGUI.BlackjackPlayerView();
+            this.betLabel = new System.Windows.Forms.Label();
+            this.playButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.betPicker)).BeginInit();
             this.SuspendLayout();
             // 
-            // playerCard2
-            // 
-            this.playerCard2.Location = new System.Drawing.Point(317, 344);
-            this.playerCard2.Name = "playerCard2";
-            this.playerCard2.Size = new System.Drawing.Size(109, 158);
-            this.playerCard2.TabIndex = 0;
-            this.playerCard2.TabStop = false;
-            // 
-            // playerCard1
-            // 
-            this.playerCard1.Location = new System.Drawing.Point(356, 344);
-            this.playerCard1.Name = "playerCard1";
-            this.playerCard1.Size = new System.Drawing.Size(109, 158);
-            this.playerCard1.TabIndex = 1;
-            this.playerCard1.TabStop = false;
-            // 
-            // dealerCard2
-            // 
-            this.dealerCard2.Location = new System.Drawing.Point(317, 22);
-            this.dealerCard2.Name = "dealerCard2";
-            this.dealerCard2.Size = new System.Drawing.Size(109, 158);
-            this.dealerCard2.TabIndex = 2;
-            this.dealerCard2.TabStop = false;
-            // 
-            // dealerCard1
-            // 
-            this.dealerCard1.Location = new System.Drawing.Point(356, 22);
-            this.dealerCard1.Name = "dealerCard1";
-            this.dealerCard1.Size = new System.Drawing.Size(109, 158);
-            this.dealerCard1.TabIndex = 3;
-            this.dealerCard1.TabStop = false;
-            // 
-            // dealerValue
-            // 
-            this.dealerValue.AutoSize = true;
-            this.dealerValue.Location = new System.Drawing.Point(518, 41);
-            this.dealerValue.Name = "dealerValue";
-            this.dealerValue.Size = new System.Drawing.Size(16, 17);
-            this.dealerValue.TabIndex = 4;
-            this.dealerValue.Text = "0";
-            // 
-            // playerValue
-            // 
-            this.playerValue.AutoSize = true;
-            this.playerValue.Location = new System.Drawing.Point(521, 357);
-            this.playerValue.Name = "playerValue";
-            this.playerValue.Size = new System.Drawing.Size(16, 17);
-            this.playerValue.TabIndex = 5;
-            this.playerValue.Text = "0";
-            // 
             // hitButton
             // 
-            this.hitButton.Location = new System.Drawing.Point(45, 55);
+            this.hitButton.Location = new System.Drawing.Point(42, 61);
             this.hitButton.Name = "hitButton";
-            this.hitButton.Size = new System.Drawing.Size(89, 23);
+            this.hitButton.Size = new System.Drawing.Size(119, 33);
             this.hitButton.TabIndex = 6;
             this.hitButton.Text = "Hit";
             this.hitButton.UseVisualStyleBackColor = true;
             // 
             // standButton
             // 
-            this.standButton.Location = new System.Drawing.Point(45, 103);
+            this.standButton.Location = new System.Drawing.Point(42, 100);
             this.standButton.Name = "standButton";
-            this.standButton.Size = new System.Drawing.Size(89, 23);
+            this.standButton.Size = new System.Drawing.Size(119, 35);
             this.standButton.TabIndex = 7;
             this.standButton.Text = "Stand";
             this.standButton.UseVisualStyleBackColor = true;
             // 
             // doubleButton
             // 
-            this.doubleButton.Location = new System.Drawing.Point(45, 156);
+            this.doubleButton.Location = new System.Drawing.Point(41, 141);
             this.doubleButton.Name = "doubleButton";
-            this.doubleButton.Size = new System.Drawing.Size(89, 23);
+            this.doubleButton.Size = new System.Drawing.Size(120, 34);
             this.doubleButton.TabIndex = 8;
             this.doubleButton.Text = "Double";
             this.doubleButton.UseVisualStyleBackColor = true;
             // 
             // splitButton
             // 
-            this.splitButton.Location = new System.Drawing.Point(45, 211);
+            this.splitButton.Location = new System.Drawing.Point(42, 181);
             this.splitButton.Name = "splitButton";
-            this.splitButton.Size = new System.Drawing.Size(89, 23);
+            this.splitButton.Size = new System.Drawing.Size(119, 34);
             this.splitButton.TabIndex = 9;
             this.splitButton.Text = "Split";
             this.splitButton.UseVisualStyleBackColor = true;
             // 
             // surrenderButton
             // 
-            this.surrenderButton.Location = new System.Drawing.Point(45, 263);
+            this.surrenderButton.Location = new System.Drawing.Point(42, 221);
             this.surrenderButton.Name = "surrenderButton";
-            this.surrenderButton.Size = new System.Drawing.Size(89, 23);
+            this.surrenderButton.Size = new System.Drawing.Size(119, 36);
             this.surrenderButton.TabIndex = 10;
             this.surrenderButton.Text = "Surrender";
             this.surrenderButton.UseVisualStyleBackColor = true;
             // 
             // betPicker
             // 
-            this.betPicker.Location = new System.Drawing.Point(45, 355);
+            this.betPicker.Location = new System.Drawing.Point(87, 329);
             this.betPicker.Name = "betPicker";
-            this.betPicker.Size = new System.Drawing.Size(98, 22);
+            this.betPicker.Size = new System.Drawing.Size(75, 23);
             this.betPicker.TabIndex = 11;
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(586, 274);
+            this.richTextBox1.Location = new System.Drawing.Point(513, 20);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(237, 228);
+            this.richTextBox1.Size = new System.Drawing.Size(229, 451);
             this.richTextBox1.TabIndex = 12;
             this.richTextBox1.Text = "";
             // 
-            // potLabel
+            // dealerView
             // 
-            this.potLabel.AutoSize = true;
-            this.potLabel.Location = new System.Drawing.Point(365, 298);
-            this.potLabel.Name = "potLabel";
-            this.potLabel.Size = new System.Drawing.Size(28, 17);
-            this.potLabel.TabIndex = 13;
-            this.potLabel.Text = "pot";
+            this.dealerView.Location = new System.Drawing.Point(273, 2);
+            this.dealerView.Name = "dealerView";
+            this.dealerView.Size = new System.Drawing.Size(142, 224);
+            this.dealerView.TabIndex = 16;
             // 
-            // shoeLabel
+            // playerView
             // 
-            this.shoeLabel.AutoSize = true;
-            this.shoeLabel.Location = new System.Drawing.Point(619, 40);
-            this.shoeLabel.Name = "shoeLabel";
-            this.shoeLabel.Size = new System.Drawing.Size(39, 17);
-            this.shoeLabel.TabIndex = 14;
-            this.shoeLabel.Text = "shoe";
+            this.playerView.Location = new System.Drawing.Point(273, 251);
+            this.playerView.Name = "playerView";
+            this.playerView.Size = new System.Drawing.Size(159, 220);
+            this.playerView.TabIndex = 17;
             // 
-            // stackLabel
+            // betLabel
             // 
-            this.stackLabel.AutoSize = true;
-            this.stackLabel.Location = new System.Drawing.Point(87, 428);
-            this.stackLabel.Name = "stackLabel";
-            this.stackLabel.Size = new System.Drawing.Size(41, 17);
-            this.stackLabel.TabIndex = 15;
-            this.stackLabel.Text = "stack";
+            this.betLabel.AutoSize = true;
+            this.betLabel.Location = new System.Drawing.Point(42, 331);
+            this.betLabel.Name = "betLabel";
+            this.betLabel.Size = new System.Drawing.Size(27, 15);
+            this.betLabel.TabIndex = 18;
+            this.betLabel.Text = "Bet:";
             // 
-            // Form1
+            // playButton
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.playButton.Location = new System.Drawing.Point(43, 388);
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(119, 73);
+            this.playButton.TabIndex = 19;
+            this.playButton.Text = "Play";
+            this.playButton.UseVisualStyleBackColor = true;
+            // 
+            // MainForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(878, 529);
-            this.Controls.Add(this.stackLabel);
-            this.Controls.Add(this.shoeLabel);
-            this.Controls.Add(this.potLabel);
+            this.ClientSize = new System.Drawing.Size(768, 496);
+            this.Controls.Add(this.playButton);
+            this.Controls.Add(this.betLabel);
+            this.Controls.Add(this.playerView);
+            this.Controls.Add(this.dealerView);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.betPicker);
             this.Controls.Add(this.surrenderButton);
@@ -204,18 +151,8 @@ namespace BlackjackGUI
             this.Controls.Add(this.doubleButton);
             this.Controls.Add(this.standButton);
             this.Controls.Add(this.hitButton);
-            this.Controls.Add(this.playerValue);
-            this.Controls.Add(this.dealerValue);
-            this.Controls.Add(this.dealerCard1);
-            this.Controls.Add(this.dealerCard2);
-            this.Controls.Add(this.playerCard1);
-            this.Controls.Add(this.playerCard2);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.playerCard2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.playerCard1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dealerCard2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dealerCard1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.betPicker)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -223,13 +160,6 @@ namespace BlackjackGUI
         }
 
         #endregion
-
-        private System.Windows.Forms.PictureBox playerCard2;
-        private System.Windows.Forms.PictureBox playerCard1;
-        private System.Windows.Forms.PictureBox dealerCard2;
-        private System.Windows.Forms.PictureBox dealerCard1;
-        private System.Windows.Forms.Label dealerValue;
-        private System.Windows.Forms.Label playerValue;
         private System.Windows.Forms.Button hitButton;
         private System.Windows.Forms.Button standButton;
         private System.Windows.Forms.Button doubleButton;
@@ -237,9 +167,10 @@ namespace BlackjackGUI
         private System.Windows.Forms.Button surrenderButton;
         private System.Windows.Forms.NumericUpDown betPicker;
         private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.Label potLabel;
-        private System.Windows.Forms.Label shoeLabel;
-        private System.Windows.Forms.Label stackLabel;
+        private BlackjackPlayerView dealerView;
+        private BlackjackPlayerView playerView;
+        private System.Windows.Forms.Label betLabel;
+        private System.Windows.Forms.Button playButton;
     }
 }
 
