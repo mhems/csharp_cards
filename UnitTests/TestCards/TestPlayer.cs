@@ -43,13 +43,5 @@ namespace TestCards
             p1.Bet(50);
             Assert.AreEqual(50, p1.Bank.Balance);
         }
-
-        [TestMethod]
-        public void TestDealer()
-        {
-            Dealer dealer = new();
-            Assert.IsTrue(dealer.Bank is HouseBank);
-            Assert.IsTrue(dealer.ToString().Contains("Dealer"));
-        }
     }
 }

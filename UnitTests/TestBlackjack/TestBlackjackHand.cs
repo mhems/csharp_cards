@@ -9,8 +9,6 @@ namespace TestBlackjack
     public class TestBlackjackHand
     {
         private Card two, ten, jack, queen, king, ace;
-        private bool splitHandlerCalled = false;
-        private BlackjackHand left, right;
 
         [TestInitialize]
         public void Setup()
@@ -21,14 +19,6 @@ namespace TestBlackjack
             queen = CardFactory.GetCard(Card.RankEnum.Queen, Card.SuitEnum.Spades);
             king = CardFactory.GetCard(Card.RankEnum.King, Card.SuitEnum.Clubs);
             ace = CardFactory.GetCard(Card.RankEnum.Ace, Card.SuitEnum.Hearts);
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            splitHandlerCalled = false;
-            left = null;
-            right = null;
         }
 
         [TestMethod]
@@ -110,13 +100,6 @@ namespace TestBlackjack
             Assert.IsFalse(hand.IsSplit);
         }
 
-        private void SplitHandler(object obj, BlackjackHand.SplitEventArgs args)
-        {
-            splitHandlerCalled = true;
-            left = args.LeftHand;
-            right = args.RightHand;
-        }
-
         [TestMethod]
         public void TestPairs()
         {
@@ -130,49 +113,6 @@ namespace TestBlackjack
             Assert.IsFalse(hand.IsBlackjack);
             Assert.IsFalse(hand.IsNaturalBlackjack);
             Assert.IsFalse(hand.IsSplit);
-
-            BlackjackHand a, b;
-            hand.Split += SplitHandler;
-            (a, b) = hand.SplitHand(ace, queen);
-
-            Assert.IsTrue(splitHandlerCalled);
-            Assert.AreEqual(a, left);
-            Assert.AreEqual(b, right);
-
-            Assert.AreEqual(king, a[0]);
-            Assert.AreEqual(ace, a[1]);
-            Assert.AreEqual(21, a.Value);
-            Assert.IsTrue(a.IsSplit);
-            Assert.AreEqual(1, a.NumAces);
-            Assert.IsTrue(a.HasAce);
-            Assert.IsTrue(a.IsSoft);
-            Assert.IsFalse(a.IsPair);
-            Assert.IsFalse(a.IsBust);
-            Assert.IsTrue(a.IsBlackjack);
-            Assert.IsFalse(a.IsNaturalBlackjack);
-
-            Assert.AreEqual(king, b[0]);
-            Assert.AreEqual(queen, b[1]);
-            Assert.AreEqual(20, b.Value);
-            Assert.IsTrue(b.IsSplit);
-            Assert.AreEqual(0, b.NumAces);
-            Assert.IsFalse(b.HasAce);
-            Assert.IsFalse(b.IsSoft);
-            Assert.IsFalse(b.IsPair);
-            Assert.IsFalse(b.IsBust);
-            Assert.IsFalse(b.IsBlackjack);
-            Assert.IsFalse(b.IsNaturalBlackjack);
-        }
-
-        [TestMethod]
-        public void TestSplitErrors()
-        {
-            BlackjackHand hand = new(two, ten);
-            Assert.ThrowsException<ActionUnavailableException>(() => hand.SplitHand(jack, ace));
-
-            hand = new(two, two);
-            hand.Add(two);
-            Assert.ThrowsException<ActionUnavailableException>(() => hand.SplitHand(jack, ace));
         }
 
         [TestMethod]

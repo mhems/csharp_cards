@@ -18,46 +18,15 @@ namespace Blackjack
         public bool IsBust => Value > 21;
         public bool IsBlackjack => Value == 21;
         public bool IsNaturalBlackjack => IsBlackjack && (Count == 2) && !IsSplit;
-        public bool IsSplit { get; private set; } = false;
+        public bool IsSplit { get; internal set; } = false;
         #endregion
 
-        public EventHandler<SplitEventArgs> Split;
-
-        public BlackjackHand()
-        {
-
-        }
+        public BlackjackHand() { }
 
         public BlackjackHand(Card first, Card second)
         {
             Add(first);
             Add(second);
-        }
-
-        public (BlackjackHand, BlackjackHand) SplitHand(Card nextCardLeftHand, Card nextCardRightHand)
-        {
-            if (!IsPair)
-            {
-                throw new ActionUnavailableException("Cannot split a non-paired BlackjackHand");
-            }
-
-            BlackjackHand leftHand = new()
-            {
-                IsSplit = true
-            };
-            leftHand.Add(this[0]);
-            leftHand.Add(nextCardLeftHand);
-
-            BlackjackHand rightHand = new()
-            {
-                IsSplit = true
-            };
-            rightHand.Add(this[1]);
-            rightHand.Add(nextCardRightHand);
-
-            Split?.Invoke(this, new SplitEventArgs(leftHand, rightHand));
-
-            return (leftHand, rightHand);
         }
 
         private int ComputeValue()
@@ -103,17 +72,6 @@ namespace Blackjack
                 }
             }
             return false;
-        }
-
-        public class SplitEventArgs : EventArgs
-        {
-            public BlackjackHand LeftHand { get; private set; }
-            public BlackjackHand RightHand { get; private set; }
-            public SplitEventArgs(BlackjackHand left, BlackjackHand right)
-            {
-                LeftHand = left;
-                RightHand = right;
-            }
         }
     }
 }

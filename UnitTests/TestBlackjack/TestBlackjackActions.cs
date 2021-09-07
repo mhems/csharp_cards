@@ -5,39 +5,49 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Blackjack;
+using Cards;
 
 namespace TestBlackjack
 {
     [TestClass]
     public class TestBlackjackActions
     {
+        private HitAction hit;
+        private StandAction stand; 
+
+        [TestInitialize]
+        public void Setup()
+        {
+            Shoe shoe = new(1);
+            hit = new(shoe);
+            stand = new();
+        }
+
         [TestMethod]
         public void TestHit()
         {
-            HitAction hit = new();
             Assert.AreEqual(BlackjackActionEnum.Hit.ToString(), hit.ToString());
-            Assert.IsTrue(hit.Available());
+            Assert.IsTrue(hit.Available(null));
         }
 
         [TestMethod]
         public void TestStand()
         {
-            StandAction stand = new();
             Assert.AreEqual(BlackjackActionEnum.Stand.ToString(), stand.ToString());
-            Assert.IsTrue(stand.Available());
+            Assert.IsTrue(stand.Available(null));
         }
 
         [TestMethod]
         public void TestDouble()
         {
-            DoubleAction double_ = new();
+            DoubleAction double_ = new(hit, stand);
             Assert.AreEqual(BlackjackActionEnum.Double.ToString(), double_.ToString());
         }
 
         [TestMethod]
         public void TestSplit()
         {
-            SplitAction split = new();
+            SplitAction split = new(hit, stand);
             Assert.AreEqual(BlackjackActionEnum.Split.ToString(), split.ToString());
         }
 

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace Cards
 {
     public class Player
-    { 
+    {
+        private static int id = 0;
+
         public Bank Bank { get; }
         public string Name { get; protected set; }
         public int Id { get; protected set; }
-       
-        private static int id = 0;
 
         public Player(string name) : this(name, new Bank()) { }
 
@@ -52,10 +52,5 @@ namespace Cards
             }
             return false;
         }
-    }
-
-    public class Dealer : Player
-    {
-        public Dealer() : base("Dealer", new HouseBank()) { } 
     }
 }

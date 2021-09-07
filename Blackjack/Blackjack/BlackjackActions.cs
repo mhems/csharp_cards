@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Cards;
 
 namespace Blackjack
 {
@@ -26,17 +27,17 @@ namespace Blackjack
     {
         public abstract BlackjackActionEnum Kind { get; }  
 
-        public bool Act()
+        public bool Act(BlackjackTableSlot slot)
         {
-            if (!Available())
+            if (!Available(slot))
             {
                 throw new ActionUnavailableException($"Command '{Kind}' is unavailable");
             }
 
-            return Execute();
+            return Execute(slot);
         }
-        public abstract bool Execute();
-        public abstract bool Available();
+        public abstract bool Execute(BlackjackTableSlot slot);
+        public abstract bool Available(BlackjackTableSlot slot);
 
         public override string ToString()
         { 
@@ -46,16 +47,24 @@ namespace Blackjack
 
     public class HitAction : BlackjackAction
     {
+        private readonly Shoe shoe;
+
         public override BlackjackActionEnum Kind => BlackjackActionEnum.Hit;
 
-        public override bool Available()
+        public HitAction(Shoe shoe)
+        {
+            this.shoe = shoe;
+        }
+
+        public override bool Available(BlackjackTableSlot _)
         {
             return true;
         }
 
-        public override bool Execute()
+        public override bool Execute(BlackjackTableSlot slot)
         {
-            throw new NotImplementedException();
+            slot.Hand.Add(shoe.Deal(1)[0]);
+            return false;
         }
     }
 
@@ -63,44 +72,91 @@ namespace Blackjack
     {
         public override BlackjackActionEnum Kind => BlackjackActionEnum.Stand;
 
-        public override bool Available()
+        public override bool Available(BlackjackTableSlot _)
         {
             return true;
         }
 
-        public override bool Execute()
+        public override bool Execute(BlackjackTableSlot _)
         {
-            throw new NotImplementedException();
+            return true;
         }
     }
 
     public class DoubleAction: BlackjackAction
     {
+        private readonly HitAction hit;
+        private readonly StandAction stand;
+
         public override BlackjackActionEnum Kind => BlackjackActionEnum.Double;
 
-        public override bool Available()
+        public DoubleAction(HitAction hit, StandAction stand)
         {
-            throw new NotImplementedException();
+            this.hit = hit;
+            this.stand = stand;
         }
 
-        public override bool Execute()
+        public override bool Available(BlackjackTableSlot slot)
         {
-            throw new NotImplementedException();
+            if (slot.Player.Bank.Balance < 10)
+            {
+                return false;
+            }
+            if (slot.Hand.Count > 2)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override bool Execute(BlackjackTableSlot slot)
+        {
+            slot.Player.Bank.Withdraw(10);
+            slot.Pot += 10;
+            hit.Execute(slot);
+            stand.Execute(slot);
+            return true;
         }
     }
 
     public class SplitAction : BlackjackAction
     {
+        private readonly HitAction hit;
+        private readonly StandAction stand;
+
         public override BlackjackActionEnum Kind => BlackjackActionEnum.Split;
 
-        public override bool Available()
+        public SplitAction(HitAction hit, StandAction stand)
         {
-            throw new NotImplementedException();
+            this.hit = hit;
+            this.stand = stand;
         }
 
-        public override bool Execute()
+        public override bool Available(BlackjackTableSlot slot)
         {
-            throw new NotImplementedException();
+            if (slot.Player.Bank.Balance < 10)
+            {
+                return false;
+            }
+            if (slot.Hand.Count > 2)
+            {
+                return false;
+            }
+            if (!slot.Hand.IsPair)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override bool Execute(BlackjackTableSlot slot)
+        {
+            slot.Split();
+            hit.Execute(slot);
+            slot.Index++;
+            hit.Execute(slot);
+            slot.Index--;
+            return false;
         }
     }
 
@@ -108,14 +164,15 @@ namespace Blackjack
     {
         public override BlackjackActionEnum Kind => BlackjackActionEnum.Surrender;
 
-        public override bool Available()
+        public override bool Available(BlackjackTableSlot slot)
         {
-            throw new NotImplementedException();
+            return slot.Hand.Count == 2 && !slot.Hand.IsSplit;
         }
 
-        public override bool Execute()
+        public override bool Execute(BlackjackTableSlot slot)
         {
-            throw new NotImplementedException();
+            slot.Surrendered = true;
+            return true;
         }
     }
 }

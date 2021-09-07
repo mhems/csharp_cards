@@ -29,7 +29,7 @@ namespace Cards
             Balance = balance;
         }
 
-        public virtual void Withdraw(int amount)
+        public virtual int Withdraw(int amount)
         {
             if (amount < 0)
             {
@@ -41,6 +41,7 @@ namespace Cards
             }
             Balance -= amount;
             Withdrawn?.Invoke(this, new BankTransactionEventArgs(-amount, Balance));
+            return amount;
         }
 
         public virtual void Deposit(int amount)
@@ -59,7 +60,7 @@ namespace Cards
     {
         public HouseBank(int balance = 0) : base(balance) { }
 
-        public override void Withdraw(int amount)
+        public override int Withdraw(int amount)
         {
             if (amount < 0)
             {
@@ -67,6 +68,7 @@ namespace Cards
             }
             Balance -= amount;
             Withdrawn?.Invoke(this, new BankTransactionEventArgs(-amount, Balance));
+            return amount;
         }
     }
 
