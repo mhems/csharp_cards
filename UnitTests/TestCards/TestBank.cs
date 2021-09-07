@@ -85,6 +85,23 @@ namespace TestCards
         }
 
         [TestMethod]
+        public void TestTransact()
+        {
+            Bank donor = new(100);
+            Bank donee = new(0);
+
+            donor.Withdrawn += WithdrawHandler;
+            donee.Deposited += DepositHandler;
+
+            Assert.ThrowsException<ArgumentException>(() => donor.TransactTo(null, 0));
+            Assert.ThrowsException<ArgumentException>(() => donor.TransactTo(donee, -10));
+
+            donor.TransactTo(donee, 50);
+            Assert.AreEqual(50, donor.Balance);
+            Assert.AreEqual(50, donee.Balance);
+        }
+
+        [TestMethod]
         public void TestHouseBank()
         {
             Bank bank = new HouseBank(100);

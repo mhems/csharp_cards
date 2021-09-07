@@ -29,6 +29,20 @@ namespace Cards
             Balance = balance;
         }
 
+        public virtual void TransactTo(Bank recipient, int amount)
+        {
+            if (recipient == null)
+            {
+                throw new ArgumentException("recipient Bank cannot be null");
+            }
+            if (amount < 0)
+            {
+                throw new ArgumentException("Cannot transact with a negative amount");
+            }
+            Withdraw(amount);
+            recipient.Deposit(amount);
+        }
+
         public virtual int Withdraw(int amount)
         {
             if (amount < 0)
