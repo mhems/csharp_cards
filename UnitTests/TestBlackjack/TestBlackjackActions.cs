@@ -47,7 +47,7 @@ namespace TestBlackjack
         [TestMethod]
         public void TestSplit()
         {
-            SplitAction split = new(hit, stand);
+            SplitAction split = new(hit);
             Assert.AreEqual(BlackjackActionEnum.Split.ToString(), split.ToString());
         }
 

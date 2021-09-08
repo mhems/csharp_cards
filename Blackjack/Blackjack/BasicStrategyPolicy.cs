@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blackjack
 {
-    public class BasicStrategyPolicy : IBlackjackActionPolicy
+    public class BasicStrategyPolicy : BlackjackDecisionPolicy
     {
         class StrategyChart
         {
@@ -105,7 +105,7 @@ namespace Blackjack
             PairChart?.ToFile(Path.Join(path, "PairChart.csv"));
         }
 
-        public BlackjackActionEnum Decide(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions)
+        protected override BlackjackActionEnum DecideInner(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions)
         {
             BlackjackActionEnum action;
             int total = hand.Value;

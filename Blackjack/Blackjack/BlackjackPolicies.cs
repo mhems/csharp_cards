@@ -7,14 +7,38 @@ using Cards;
 
 namespace Blackjack
 {
-    public interface IBlackjackActionPolicy
+    public abstract class BlackjackDecisionPolicy
     {
-        public BlackjackActionEnum Decide(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions);
+        public event EventHandler<BlackjackDecisionEventArgs> Decided;
+
+        public BlackjackActionEnum Decide(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions)
+        {
+            BlackjackActionEnum decision = DecideInner(hand, upCard, availableActions);
+            Decided?.Invoke(this, new BlackjackDecisionEventArgs(hand, upCard, availableActions, decision));
+            return decision;
+        }
+        protected abstract BlackjackActionEnum DecideInner(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions);
     }
 
-    public class DealerActionPolicy : IBlackjackActionPolicy
+    public class BlackjackDecisionEventArgs : EventArgs
     {
-        public BlackjackActionEnum Decide(BlackjackHand hand, Card card, HashSet<BlackjackActionEnum> _)
+        public BlackjackHand Hand { get; }
+        public Card UpCard { get; }
+        public HashSet<BlackjackActionEnum> AvailableActions { get; }
+        public BlackjackActionEnum Decision { get; }
+
+        public BlackjackDecisionEventArgs(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions, BlackjackActionEnum decision)
+        {
+            Hand = hand;
+            UpCard = upCard;
+            AvailableActions = availableActions;
+            Decision = decision;
+        }
+    }
+
+    public class DealerDecisionPolicy : BlackjackDecisionPolicy
+    {
+        protected override BlackjackActionEnum DecideInner(BlackjackHand hand, Card card, HashSet<BlackjackActionEnum> _)
         {
             int value = hand.Value;
             if (value < 17)
@@ -29,12 +53,12 @@ namespace Blackjack
         }
     }
 
-    public interface IBlackjackBettingPolicy
+    public abstract class BlackjackBettingPolicy
     {
-        public int Bet();
+        public abstract int Bet();
     }
 
-    public class MinimumBettingPolicy : IBlackjackBettingPolicy
+    public class MinimumBettingPolicy : BlackjackBettingPolicy
     {
         public int Amount { get; private set; }
 
@@ -42,20 +66,42 @@ namespace Blackjack
         {
             Amount = amount;
         }
-        public int Bet()
+        public override int Bet()
         {
             return Amount;
         }
     }
 
-    public interface IBlackjackInsurancePolicy
+    public abstract class BlackjackInsurancePolicy
     {
-        public bool Insure(BlackjackHand hand, Card upCard);
+        public event EventHandler<BlackjackInsuranceEventArgs> Insured;
+
+        public bool Insure(BlackjackHand hand, Card upCard)
+        { 
+            bool insured = InsureInner(hand, upCard);
+            Insured?.Invoke(this, new BlackjackInsuranceEventArgs(hand, upCard, insured));
+            return insured;
+        }
+
+        protected abstract bool InsureInner(BlackjackHand hand, Card upCard);
     }
 
-    public class DeclineInsurancePolicy : IBlackjackInsurancePolicy
+    public class BlackjackInsuranceEventArgs : EventArgs
     {
-        public bool Insure(BlackjackHand hand, Card _)
+        public BlackjackHand Hand { get; }
+        public Card UpCard { get; }
+        public bool Insured { get; }
+        public BlackjackInsuranceEventArgs(BlackjackHand hand, Card upCard, bool insured)
+        {
+            Hand = hand;
+            UpCard = upCard;
+            Insured = insured;
+        }
+    }
+
+    public class DeclineInsurancePolicy : BlackjackInsurancePolicy
+    {
+        protected override bool InsureInner(BlackjackHand hand, Card _)
         {
             return false;
         }

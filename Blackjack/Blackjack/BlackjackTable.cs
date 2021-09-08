@@ -170,7 +170,7 @@ namespace Blackjack
                     break;
                 }
                 HashSet<BlackjackActionEnum> availableActions = new(actionMap.Keys.Where(a => actionMap[a].Available(slot)));
-                BlackjackActionEnum action = slot.Player.ActionPolicy.Decide(slot.Hand, UpCard, availableActions);
+                BlackjackActionEnum action = slot.Player.DecisionPolicy.Decide(slot.Hand, UpCard, availableActions);
                 if (actionMap[action].Act(slot))
                 {
                     break;

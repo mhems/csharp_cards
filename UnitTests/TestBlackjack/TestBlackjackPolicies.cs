@@ -19,7 +19,7 @@ namespace TestBlackjack
             Card six = CardFactory.GetCard(Card.RankEnum.Six, Card.SuitEnum.Clubs);
             Card seven = CardFactory.GetCard(Card.RankEnum.Seven, Card.SuitEnum.Clubs);
             Card ace = CardFactory.GetCard(Card.RankEnum.Ace, Card.SuitEnum.Clubs);
-            DealerActionPolicy policy = new();
+            DealerDecisionPolicy policy = new();
             BlackjackHand belowHand = new(six, six);
             BlackjackHand hard17 = new(ten, seven);
             BlackjackHand soft17 = new(ace, six);

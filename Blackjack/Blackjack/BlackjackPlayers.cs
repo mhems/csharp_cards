@@ -9,9 +9,21 @@ namespace Blackjack
 {
     public class BlackjackPlayer : Player
     {
-        public IBlackjackActionPolicy ActionPolicy { get; set; }
-        public IBlackjackBettingPolicy BettingPolicy { get; set; }
-        public IBlackjackInsurancePolicy InsurancePolicy { get; set; }
+        public BlackjackDecisionPolicy DecisionPolicy { get; set; }
+        public BlackjackBettingPolicy BettingPolicy { get; set; }
+        public BlackjackInsurancePolicy InsurancePolicy { get; set; }
+
+        public event EventHandler<BlackjackDecisionEventArgs> Decided
+        {
+            add { DecisionPolicy.Decided += value; }
+            remove { DecisionPolicy.Decided -= value; }
+        }
+
+        public event EventHandler<BlackjackInsuranceEventArgs> Insured
+        {
+            add { InsurancePolicy.Insured += value; }
+            remove { InsurancePolicy.Insured -= value; }
+        }
 
         public BlackjackPlayer(string name) : base(name) { }
 
@@ -22,7 +34,7 @@ namespace Blackjack
     {
         public BlackjackDealer() : base("Dealer", new HouseBank())
         { 
-            ActionPolicy = new DealerActionPolicy(); 
+            DecisionPolicy = new DealerDecisionPolicy(); 
         }
     }
 }
