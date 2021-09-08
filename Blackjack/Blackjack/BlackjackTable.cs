@@ -33,6 +33,9 @@ namespace Blackjack
         public int NumActiveSlots => ActiveSlots.Count();
         public BlackjackTableSlot[] ActiveSlots => slots.Where(s => s.Active).ToArray();
 
+        public event EventHandler<EventArgs> RoundBegun;
+        public event EventHandler<EventArgs> RoundEnded;
+
         public BlackjackTable(int numSeats)
         {
             Shoe = new Shoe(6);
@@ -188,6 +191,7 @@ namespace Blackjack
 
         private void BeginRound()
         {
+            RoundBegun?.Invoke(this, new EventArgs());
             foreach (BlackjackTableSlot slot in slots.Where(s => s.Occupied))
             {
                 slot.BeginRound();
@@ -214,6 +218,7 @@ namespace Blackjack
                 slot.EndRound();
             }
             DealerSlot.EndRound();
+            RoundEnded?.Invoke(this, new EventArgs());
         }
     }
 
@@ -251,10 +256,13 @@ namespace Blackjack
 
         #region Events
         public EventHandler<EventArgs> Seating;
+        public event EventHandler<EventArgs> RoundBegun;
+        public event EventHandler<EventArgs> RoundEnded;
         #endregion
 
         public void BeginRound()
         {
+            RoundBegun?.Invoke(this, new EventArgs());
             Pot = player.BettingPolicy.Bet();
         }
 
@@ -321,6 +329,8 @@ namespace Blackjack
 
             Insured = false;
             Settled = false;
+
+            RoundEnded?.Invoke(this, new EventArgs());
         }
     }
 
