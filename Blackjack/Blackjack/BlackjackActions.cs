@@ -200,6 +200,7 @@ namespace Blackjack
         public override bool Execute(BlackjackTableSlot slot)
         {
             slot.Surrendered = true;
+            slot.Player.Payout(slot.Pot / 2);
             return true;
         }
     }

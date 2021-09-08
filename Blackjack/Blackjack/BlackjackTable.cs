@@ -82,6 +82,7 @@ namespace Blackjack
         {
             BeginRound();
             Deal();
+            OfferEarlySurrender();
             if (UpCard.IsAce)
             {
                 OfferInsurance();
@@ -99,6 +100,20 @@ namespace Blackjack
             DealSlots();
             Settle();
             EndRound();
+        }
+
+        private void OfferEarlySurrender()
+        {
+            foreach (BlackjackTableSlot slot in ActiveSlots)
+            {
+                if (slot.OfferEarlySurrender(UpCard))
+                {
+                    actionMap[BlackjackActionEnum.Surrender].Act(slot);
+                    TableBank.Deposit(slot.Pot / 2);
+                    slot.Pot = 0;
+                    slot.Settled = true;
+                }
+            }
         }
 
         private void OfferInsurance()
@@ -224,6 +239,7 @@ namespace Blackjack
 
     public class BlackjackTableSlot
     {
+        private static readonly HashSet<BlackjackActionEnum> SurrenderSet = new() { BlackjackActionEnum.Surrender };
         private readonly List<BlackjackHand> hands = new();
         private readonly List<int> pots = new() { 0 };
         private BlackjackPlayer player = null;
@@ -266,6 +282,12 @@ namespace Blackjack
             Pot = player.BettingPolicy.Bet();
         }
 
+        public bool OfferEarlySurrender(Card upCard)
+        {
+            BlackjackActionEnum decision = player.DecisionPolicy.Decide(Hand, upCard, SurrenderSet);
+            return decision == BlackjackActionEnum.Surrender;
+        }
+
         public bool OfferInsurance(Card upCard)
         {
             Insured = player.InsurancePolicy.Insure(Hand, upCard);
@@ -291,7 +313,7 @@ namespace Blackjack
             {
                 if (Surrendered)
                 {
-                    house.Deposit(10);
+                    house.Deposit(pots[i]);
                     pots[i] = 0;
                 }
                 else if (dealerValue > 21)
