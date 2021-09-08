@@ -20,8 +20,7 @@ namespace Blackjack
 
     public class BlackjackCount
     {
-        private readonly Dictionary<BlackjackCountEnum, float> countMap = new();
-        private static readonly Dictionary<BlackjackCountEnum, List<float>> deltaMap = new()
+        public static readonly Dictionary<BlackjackCountEnum, List<float>> deltaMap = new()
         {
             { BlackjackCountEnum.HiLo, new List<float>() { 1, 1, 1, 1, 1, 0, 0, 0, -1, -1 } },
             { BlackjackCountEnum.HiOptOne, new List<float>() { 0, 1, 1, 1, 1, 0, 0, 0, -1, -1, -1, -1, 0 } },
@@ -31,6 +30,7 @@ namespace Blackjack
             { BlackjackCountEnum.RedSeven, new List<float>() {1, 1, 1, 1, 1, 0.5f, 0,  0, -1, -1, -1, -1, -1 } },
             { BlackjackCountEnum.ZenCount, new List<float>() {1, 1, 2, 2, 2, 1, 0,  0, -2, -2, -2, -2, -1 } }
         };
+        private readonly Dictionary<BlackjackCountEnum, float> countMap = new();
 
         public BlackjackCount(Shoe shoe)
         {
