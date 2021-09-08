@@ -47,7 +47,7 @@ namespace Blackjack
             actionMap.Add(BlackjackActionEnum.Hit, hit);
             actionMap.Add(BlackjackActionEnum.Stand, stand);
             actionMap.Add(BlackjackActionEnum.Double, new DoubleAction(hit, stand));
-            actionMap.Add(BlackjackActionEnum.Split, new SplitAction(hit, stand));
+            actionMap.Add(BlackjackActionEnum.Split, new SplitAction(hit));
             actionMap.Add(BlackjackActionEnum.Surrender, new SurrenderAction());
         }
 

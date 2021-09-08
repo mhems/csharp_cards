@@ -25,7 +25,9 @@ namespace Blackjack
 
     public abstract class BlackjackAction
     {
-        public abstract BlackjackActionEnum Kind { get; }  
+        public abstract BlackjackActionEnum Kind { get; }
+
+        public event EventHandler<BlackjackActionEventArgs> Acted;
 
         public bool Act(BlackjackTableSlot slot)
         {
@@ -34,8 +36,11 @@ namespace Blackjack
                 throw new ActionUnavailableException($"Command '{Kind}' is unavailable");
             }
 
-            return Execute(slot);
+            bool done = Execute(slot);
+            Acted?.Invoke(this, new BlackjackActionEventArgs(Kind, done));
+            return done;
         }
+
         public abstract bool Execute(BlackjackTableSlot slot);
         public abstract bool Available(BlackjackTableSlot slot);
 
@@ -45,11 +50,25 @@ namespace Blackjack
         }
     }
 
+    public class BlackjackActionEventArgs : EventArgs
+    {
+        public BlackjackActionEnum Kind { get; }
+        public bool Done{ get; }
+
+        public BlackjackActionEventArgs(BlackjackActionEnum kind, bool done)
+        {
+            this.Kind = kind;
+            this.Done = done;
+        }
+    }
+
     public class HitAction : BlackjackAction
     {
         private readonly Shoe shoe;
 
         public override BlackjackActionEnum Kind => BlackjackActionEnum.Hit;
+
+        public event EventHandler<BlackjackHitActionEventArgs> Hit;
 
         public HitAction(Shoe shoe)
         {
@@ -63,8 +82,19 @@ namespace Blackjack
 
         public override bool Execute(BlackjackTableSlot slot)
         {
-            slot.Hand.Add(shoe.Deal(1)[0]);
+            Card newCard = shoe.Deal(1)[0];
+            slot.Hand.Add(newCard);
+            Hit?.Invoke(this, new BlackjackHitActionEventArgs(newCard));
             return false;
+        }
+    }
+
+    public class BlackjackHitActionEventArgs : EventArgs
+    {
+        public Card CardReceived { get; }
+        public BlackjackHitActionEventArgs(Card cardReceived)
+        {
+            this.CardReceived = cardReceived;
         }
     }
 
@@ -111,7 +141,7 @@ namespace Blackjack
 
         public override bool Execute(BlackjackTableSlot slot)
         {
-            slot.Player.Bank.Withdraw(10);
+            slot.Player.Bet(10);
             slot.Pot += 10;
             hit.Execute(slot);
             stand.Execute(slot);
@@ -122,14 +152,12 @@ namespace Blackjack
     public class SplitAction : BlackjackAction
     {
         private readonly HitAction hit;
-        private readonly StandAction stand;
 
         public override BlackjackActionEnum Kind => BlackjackActionEnum.Split;
 
-        public SplitAction(HitAction hit, StandAction stand)
+        public SplitAction(HitAction hit)
         {
             this.hit = hit;
-            this.stand = stand;
         }
 
         public override bool Available(BlackjackTableSlot slot)
