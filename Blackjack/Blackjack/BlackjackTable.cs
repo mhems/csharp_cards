@@ -109,8 +109,7 @@ namespace Blackjack
                 if (slot.OfferEarlySurrender(UpCard))
                 {
                     actionMap[BlackjackActionEnum.Surrender].Act(slot);
-                    TableBank.Deposit(slot.Pot / 2);
-                    slot.Pot = 0;
+                    slot.Pot.TransactTo(TableBank, slot.Pot.Balance / 2);
                     slot.Settled = true;
                 }
             }
@@ -128,12 +127,11 @@ namespace Blackjack
         {
             foreach (BlackjackTableSlot slot in ActiveSlots)
             {
+                slot.Pot.TransactTo(TableBank, 10);
                 if (slot.Insured)
                 {
-                    slot.Player.Bank.Deposit(TableBank.Withdraw(5));
+                    TableBank.TransactTo(slot.Pot, 10);
                 }
-                TableBank.Deposit(slot.Pot);
-                slot.Pot = 0;
                 slot.Settled = true;
             }
         }
@@ -144,9 +142,8 @@ namespace Blackjack
             {
                 if (slot.Insured)
                 {
-                    TableBank.Deposit(5);
-                    slot.Pot = 0;
-                    slot.Settled = true;
+                    slot.Player.Bank.TransactTo(TableBank, 5);
+                    slot.Pot.TransactTo(TableBank, 5);
                 }
             }
         }
@@ -173,17 +170,14 @@ namespace Blackjack
                 BlackjackHand hand = slot.Hand;
                 if (hand.IsBlackjack)
                 {
-                    int payout = (int)Math.Ceiling(1.5 * slot.Pot);
-                    TableBank.Withdraw(payout);
-                    slot.Player.Payout(payout);
-                    slot.Pot = 0;
+                    int payout = (int)Math.Ceiling(1.5 * slot.Pot.Balance);
+                    TableBank.TransactTo(slot.Pot, payout);
                     slot.Settled = true;
                     break;
                 }
                 else if (hand.IsBust)
                 {
-                    TableBank.Deposit(slot.Pot);
-                    slot.Pot = 0;
+                    slot.Pot.TransactTo(TableBank, slot.Pot.Balance);
                     slot.Settled = true;
                     break;
                 }
@@ -241,7 +235,7 @@ namespace Blackjack
     {
         private static readonly HashSet<BlackjackActionEnum> SurrenderSet = new() { BlackjackActionEnum.Surrender };
         private readonly List<BlackjackHand> hands = new();
-        private readonly List<int> pots = new() { 0 };
+        private readonly List<Bank> pots = new() { new() };
         private BlackjackPlayer player = null;
 
         #region Properties
@@ -260,10 +254,10 @@ namespace Blackjack
         public bool Surrendered { get; internal set; }
         public bool Settled { get; set; }
         public int NumSplits => hands.Count - 1;
-        public bool Active => pots[0] > 0;
+        public bool Active => pots[0].Balance> 0;
         public bool Occupied => Player != null;
         public BlackjackHand Hand { get => hands[Index]; internal set => hands[Index] = value; }
-        public int Pot
+        public Bank Pot
         {
             get => pots[Index];
             set => pots[Index] = value;
@@ -279,7 +273,8 @@ namespace Blackjack
         public void BeginRound()
         {
             RoundBegun?.Invoke(this, new EventArgs());
-            Pot = player.BettingPolicy.Bet();
+            int amount = player.BettingPolicy.Bet();
+            player.Bank.TransactTo(Pot, amount);
         }
 
         public bool OfferEarlySurrender(Card upCard)
@@ -291,7 +286,10 @@ namespace Blackjack
         public bool OfferInsurance(Card upCard)
         {
             Insured = player.InsurancePolicy.Insure(Hand, upCard);
-            player.Bank.Withdraw(5);
+            if (Insured)
+            {
+                player.Bank.TransactTo(Pot, 5);
+            }
             return Insured;
         }
 
@@ -303,33 +301,21 @@ namespace Blackjack
             Hand.IsSplit = true;
             hands.Add(newHand);
 
-            player.Bank.Withdraw(10);
-            pots.Add(10);
+            pots.Add(new Bank());
+            player.Bank.TransactTo(pots[1], 10);
         }
 
         public void Settle(Bank house, int dealerValue)
         {
             for (int i = 0; i < NumSplits; i++)
             {
-                if (Surrendered)
+                if (Surrendered || (hands[i].Value < dealerValue))
                 {
-                    house.Deposit(pots[i]);
-                    pots[i] = 0;
+                    pots[i].TransactTo(house, pots[i].Balance);
                 }
-                else if (dealerValue > 21)
+                else if ((dealerValue > 21) || (hands[i].Value > dealerValue))
                 {
-                    house.Withdraw(10);
-                    pots[i] = 10;
-                }
-                else if (hands[i].Value > dealerValue)
-                {
-                    house.Withdraw(10);
-                    pots[i] = 10;
-                }
-                else if (hands[i].Value < dealerValue)
-                {
-                    house.Deposit(10);
-                    pots[i] = 0;
+                    house.TransactTo(pots[i], 10);
                 }
             }
             Settled = true;
@@ -339,12 +325,12 @@ namespace Blackjack
         {
             Index = 0;
 
-            foreach (int pot in pots)
+            foreach (Bank pot in pots)
             {
-                player.Bank.Deposit(pot);
+                pot.TransactTo(player.Bank, pot.Balance);
             }
             pots.RemoveRange(1, pots.Count - 1);
-            Pot = 0;
+            Pot = new();
 
             hands.RemoveRange(1, hands.Count - 1);
             Hand.Clear();

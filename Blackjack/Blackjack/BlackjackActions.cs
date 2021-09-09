@@ -141,8 +141,7 @@ namespace Blackjack
 
         public override bool Execute(BlackjackTableSlot slot)
         {
-            slot.Player.Bet(10);
-            slot.Pot += 10;
+            slot.Player.Bank.TransactTo(slot.Pot, 10);
             hit.Execute(slot);
             stand.Execute(slot);
             return true;
@@ -179,6 +178,8 @@ namespace Blackjack
 
         public override bool Execute(BlackjackTableSlot slot)
         {
+            slot.Player.Bank.TransactTo(slot.Pot, slot.Pot.Balance);
+
             slot.Split();
             hit.Execute(slot);
             slot.Index++;
@@ -200,7 +201,7 @@ namespace Blackjack
         public override bool Execute(BlackjackTableSlot slot)
         {
             slot.Surrendered = true;
-            slot.Player.Payout(slot.Pot / 2);
+            slot.Pot.TransactTo(slot.Player.Bank, slot.Pot.Balance / 2);
             return true;
         }
     }
