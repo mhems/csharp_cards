@@ -12,9 +12,9 @@ using Cards;
 
 namespace BlackjackGUI
 {
-    public partial class BlackjackGUI : Form
+    public partial class BlackjackApp : Form
     {
-        public BlackjackGUI()
+        public BlackjackApp()
         {
             InitializeComponent();
         }

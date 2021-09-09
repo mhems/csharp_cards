@@ -32,8 +32,8 @@ namespace BlackjackGUI
             this.potLabel = new System.Windows.Forms.Label();
             this.playerValue = new System.Windows.Forms.Label();
             this.cardTable = new System.Windows.Forms.TableLayoutPanel();
-            this.blackjackCardView3 = new global::BlackjackGUI.BlackjackCardView();
-            this.blackjackCardView1 = new global::BlackjackGUI.BlackjackCardView();
+            this.blackjackCardView3 = new BlackjackGUI.BlackjackCardView();
+            this.blackjackCardView1 = new BlackjackGUI.BlackjackCardView();
             this.cardTable.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,12 +60,14 @@ namespace BlackjackGUI
             // 
             // cardTable
             // 
+            this.cardTable.BackColor = System.Drawing.SystemColors.Control;
             this.cardTable.ColumnCount = 2;
             this.cardTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.cardTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.cardTable.Controls.Add(this.blackjackCardView3, 1, 0);
             this.cardTable.Controls.Add(this.blackjackCardView1, 0, 0);
             this.cardTable.Location = new System.Drawing.Point(6, 65);
+            this.cardTable.Margin = new System.Windows.Forms.Padding(0);
             this.cardTable.Name = "cardTable";
             this.cardTable.RowCount = 1;
             this.cardTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -74,6 +76,7 @@ namespace BlackjackGUI
             // 
             // blackjackCardView3
             // 
+            this.blackjackCardView3.BackColor = System.Drawing.SystemColors.Control;
             this.blackjackCardView3.Location = new System.Drawing.Point(23, 4);
             this.blackjackCardView3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.blackjackCardView3.Name = "blackjackCardView3";
@@ -82,6 +85,7 @@ namespace BlackjackGUI
             // 
             // blackjackCardView1
             // 
+            this.blackjackCardView1.BackColor = System.Drawing.SystemColors.Control;
             this.blackjackCardView1.Location = new System.Drawing.Point(3, 4);
             this.blackjackCardView1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.blackjackCardView1.Name = "blackjackCardView1";

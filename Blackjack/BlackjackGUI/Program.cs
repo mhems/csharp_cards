@@ -16,7 +16,7 @@ namespace BlackjackGUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new BlackjackGUI());
+            Application.Run(new BlackjackApp());
         }
     }
 }

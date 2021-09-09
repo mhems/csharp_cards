@@ -24,7 +24,7 @@ namespace BlackjackGUI
             {
                 cardTable.ColumnCount++;
                 cardTable.ColumnStyles[count - 1].SizeType = SizeType.Absolute;
-                cardTable.ColumnStyles[count - 1].Width = 25F;
+                cardTable.ColumnStyles[count - 1].Width = 20F;
                 cardTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             }
             cardTable.Controls.Add(card, count, 0);

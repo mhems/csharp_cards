@@ -1,7 +1,7 @@
 ﻿
 namespace BlackjackGUI
 {
-    partial class BlackjackGUI
+    partial class BlackjackApp
     {
         /// <summary>
         /// Required designer variable.

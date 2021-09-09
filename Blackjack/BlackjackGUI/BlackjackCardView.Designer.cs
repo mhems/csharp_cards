@@ -47,8 +47,9 @@ namespace BlackjackGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(this.cardPictureBox);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "BlackjackCardView";
             this.Size = new System.Drawing.Size(71, 96);
             ((System.ComponentModel.ISupportInitialize)(this.cardPictureBox)).EndInit();
