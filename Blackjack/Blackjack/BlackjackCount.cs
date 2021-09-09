@@ -39,10 +39,6 @@ namespace Blackjack
             foreach (BlackjackCountEnum system in Enum.GetValues(typeof(BlackjackCountEnum)))
             {
                 countMap.Add(system, 0);
-                if (deltaMap[system].Count != 10)
-                {
-                    var i = 3;
-                }
             }
         }
 
