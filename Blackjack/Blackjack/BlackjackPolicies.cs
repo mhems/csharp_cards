@@ -45,7 +45,7 @@ namespace Blackjack
             {
                 return BlackjackActionEnum.Hit;
             }
-            else if (BlackjackConfig.DealerHitsSoft17 && hand.IsSoft && value == 17)
+            else if (BlackjackConfig.Config.DealerHitsSoft17 && hand.IsSoft && value == 17)
             {
                 return BlackjackActionEnum.Hit;
             }
@@ -62,7 +62,7 @@ namespace Blackjack
     {
         public override int Bet()
         {
-            return BlackjackConfig.MinimumBet;
+            return BlackjackConfig.Config.MinimumBet;
         }
     }
 
@@ -96,6 +96,41 @@ namespace Blackjack
     public class DeclineInsurancePolicy : BlackjackInsurancePolicy
     {
         protected override bool InsureInner(BlackjackHand hand, Card _)
+        {
+            return false;
+        }
+    }
+
+    public abstract class BlackjackEarlySurrenderPolicy
+    {
+        public event EventHandler<BlackjackEarlySurrenderEventArgs> Surrendered;
+
+        public bool Surrender(BlackjackHand hand, Card upCard)
+        {
+            bool surrendered = SurrenderInner(hand, upCard);
+            Surrendered?.Invoke(this, new BlackjackEarlySurrenderEventArgs(hand, upCard, surrendered));
+            return surrendered;
+        }
+
+        protected abstract bool SurrenderInner(BlackjackHand hand, Card upCard);
+    }
+
+    public class BlackjackEarlySurrenderEventArgs : EventArgs
+    {
+        public BlackjackHand Hand { get; }
+        public Card UpCard { get; }
+        public bool Surrendered { get; }
+        public BlackjackEarlySurrenderEventArgs(BlackjackHand hand, Card upCard, bool surrendered)
+        {
+            Hand = hand;
+            UpCard = upCard;
+            Surrendered = surrendered;
+        }
+    }
+
+    public class DeclineEarlySurrenderPolicy : BlackjackEarlySurrenderPolicy
+    {
+        protected override bool SurrenderInner(BlackjackHand hand, Card _)
         {
             return false;
         }

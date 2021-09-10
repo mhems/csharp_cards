@@ -36,7 +36,7 @@ namespace TestBlackjack
         public void TestMinBetPolicy()
         {
             MinimumBettingPolicy policy = new();
-            Assert.AreEqual(BlackjackConfig.MinimumBet, policy.Bet());
+            Assert.AreEqual(BlackjackConfig.Config.MinimumBet, policy.Bet());
         }
 
         [TestMethod]
@@ -44,11 +44,24 @@ namespace TestBlackjack
         {
             DeclineInsurancePolicy policy = new();
             Card ace = CardFactory.GetCard(Card.RankEnum.Ace, Card.SuitEnum.Clubs);
-            BlackjackHand hand = new BlackjackHand(ace, ace);
+            BlackjackHand hand = new (ace, ace);
             foreach (int rankNum in Enum.GetValues(typeof(Card.RankEnum)))
             {
                 Card c = CardFactory.GetCard((Card.RankEnum)rankNum, Card.SuitEnum.Clubs);
                 Assert.IsFalse(policy.Insure(hand, c));
+            }
+        }
+
+        [TestMethod]
+        public void TestDeclineSurrenderPolicy()
+        {
+            DeclineEarlySurrenderPolicy policy = new();
+            Card eight = CardFactory.GetCard(Card.RankEnum.Eight, Card.SuitEnum.Clubs);
+            BlackjackHand hand = new(eight, eight);
+            foreach (int rankNum in Enum.GetValues(typeof(Card.RankEnum)))
+            {
+                Card c = CardFactory.GetCard((Card.RankEnum)rankNum, Card.SuitEnum.Clubs);
+                Assert.IsFalse(policy.Surrender(hand, c));
             }
         }
     }

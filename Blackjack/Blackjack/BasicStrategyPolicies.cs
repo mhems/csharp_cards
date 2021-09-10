@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Blackjack
 {
-    public class BasicStrategyPolicy : BlackjackDecisionPolicy
+    public class BasicStrategyPolicies : BlackjackDecisionPolicy
     {
         class StrategyChart
         {
@@ -89,7 +89,7 @@ namespace Blackjack
         private readonly StrategyChart SoftChart;
         private readonly StrategyChart PairChart;
 
-        public BasicStrategyPolicy()
+        public BasicStrategyPolicies()
         {
             BasicChart = StrategyChart.FromFile("BasicChart.csv");
             HardChart = StrategyChart.FromFile("HardChart.csv");
@@ -135,6 +135,41 @@ namespace Blackjack
                 }
             }
             return BasicChart[total, upCard];
+        }
+    }
+
+    public class BasicEarlySurrenderPolicy : BlackjackEarlySurrenderPolicy
+    {
+        protected override bool SurrenderInner(BlackjackHand hand, Card upCard)
+        {
+            if (upCard.IsAce)
+            {
+                if (!hand.IsSoft)
+                {
+                    return ((hand.Value >= 5 && hand.Value <= 7) ||
+                        (hand.Value >= 12 && hand.Value <= 17) ||
+                        (BlackjackConfig.Config.DealerHitsSoft17 && hand.Value == 4));
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (BlackjackHand.CardValue(upCard) == 10)
+            {
+                if (!hand.IsSoft)
+                {
+                    return hand.Value >= 14 && hand.Value <= 16;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return upCard.Rank == Card.RankEnum.Nine && hand.Value == 16 && !hand.IsPair;
+            }
         }
     }
 }

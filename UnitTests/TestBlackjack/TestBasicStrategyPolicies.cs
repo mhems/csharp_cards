@@ -10,7 +10,7 @@ using System.IO;
 namespace TestBlackjack
 {
     [TestClass]
-    public class TestBasicStrategyPolicy
+    public class TestBasicStrategyPolicies
     {
         private static bool CompareFiles(string name, string prefix)
         {
@@ -20,7 +20,7 @@ namespace TestBlackjack
         [TestMethod]
         public void TestSerialization()
         {
-            BasicStrategyPolicy policy = new();
+            BasicStrategyPolicies policy = new();
             string dir = "tmp";
             policy.Save(dir);
 
@@ -28,6 +28,13 @@ namespace TestBlackjack
             Assert.IsTrue(CompareFiles("HardChart.csv", dir));
             Assert.IsTrue(CompareFiles("SoftChart.csv", dir));
             Assert.IsTrue(CompareFiles("PairChart.csv", dir));
+        }
+
+        [TestMethod]
+        public void TestEarlySurrender()
+        {
+            BasicEarlySurrenderPolicy policy = new();
+            // TODO
         }
     }
 }

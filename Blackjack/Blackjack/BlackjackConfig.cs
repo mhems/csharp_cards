@@ -5,41 +5,83 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Blackjack
-{
-    public class BlackjackConfig
+{    
+    public static class BlackjackConfig
     {
-        public const bool DealerHitsSoft17 = true;
+        public static IBlackjackConfig Config { get;} = new StaticBlackjackConfig();
+    }
 
-        public const int NumDecksInShoe = 6;
-        public const int CutIndex = 26;
-        public const int NumBurntOnShuffle = 1;
+    public interface IBlackjackConfig
+    {
+        public bool DealerHitsSoft17 { get; }
 
-        public const int MinimumBet = 10;
-        public const int MaximumBet = 250;
+        public int NumDecksInShoe { get; }
+        public int CutIndex { get; }
+        public int NumBurntOnShuffle { get; }
 
-        public const double PayoutRatio = 1;
-        public const double BlackjackPayoutRatio = 1.5;
+        public int MinimumBet { get; }
+        public int MaximumBet { get; }
 
-        public const bool DoubleOffered = true;
-        public const bool DoubleAfterSplit = true;
-        public const uint DoubleTotalsAllowed = 0x3F_FFFF;
-        public const double DoubleCost = 1;
+        public double PayoutRatio { get; }
+        public double BlackjackPayoutRatio { get; }
 
-        public const bool SplitOffered = true;
-        public const bool SplitByValue = false;
-        public const int NumSplitsAllowed = 4;
-        public const bool ReSplitAces = true; // TODO
-        public const bool HitSplitAces = false; // TODO
-        public const double SplitCost = 1;
+        public bool DoubleOffered { get; }
+        public bool DoubleAfterSplit { get; }
+        public uint DoubleTotalsAllowed { get; }
+        public double DoubleCost { get; }
 
-        public const bool EarlySurrenderOffered = false;
-        public const double EarlySurrenderCost = 0.5;
+        public bool SplitOffered { get; }
+        public bool SplitByValue { get; }
+        public int NumSplitsAllowed { get; }
+        public bool ReSplitAces { get; }
+        public bool HitSplitAces { get; }
+        public double SplitCost { get; }
 
-        public const bool LateSurrenderOffered = true;
-        public const double LateSurrenderCost = 0.5;
+        public bool EarlySurrenderOffered { get; }
+        public double EarlySurrenderCost { get; }
 
-        public const bool InsuranceOffered = true;
-        public const double InsuranceCost = 0.5;
-        public const double InsurancePayoutRatio = 2;
+        public bool LateSurrenderOffered { get; }
+        public double LateSurrenderCost { get; }
+
+        public bool InsuranceOffered { get; }
+        public double InsuranceCost { get; }
+        public double InsurancePayoutRatio { get; }
+    }
+
+    public class StaticBlackjackConfig : IBlackjackConfig
+    {
+        public bool DealerHitsSoft17 { get; } = true;
+
+        public int NumDecksInShoe { get; } = 6;
+        public int CutIndex { get; } = 26;
+        public int NumBurntOnShuffle { get; } = 1;
+
+        public int MinimumBet { get; } = 10;
+        public int MaximumBet { get; } = 250;
+
+        public double PayoutRatio { get; } = 1;
+        public double BlackjackPayoutRatio { get; } = 1.5;
+
+        public bool DoubleOffered { get; } = true;
+        public bool DoubleAfterSplit { get; } = true;
+        public uint DoubleTotalsAllowed { get; } = 0x3F_FFFF;
+        public double DoubleCost { get; } = 1;
+
+        public bool SplitOffered { get; } = true;
+        public bool SplitByValue { get; } = false;
+        public int NumSplitsAllowed { get; } = 4;
+        public bool ReSplitAces { get; } = true;
+        public bool HitSplitAces { get; } = false;
+        public double SplitCost { get; } = 1;
+
+        public bool EarlySurrenderOffered { get; } = false;
+        public double EarlySurrenderCost { get; } = 0.5;
+
+        public bool LateSurrenderOffered { get; } = true;
+        public double LateSurrenderCost { get; } = 0.5;
+
+        public bool InsuranceOffered { get; } = true;
+        public double InsuranceCost { get; } = 0.5;
+        public double InsurancePayoutRatio { get; } = 2;
     }
 }

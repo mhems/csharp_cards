@@ -128,7 +128,7 @@ namespace Blackjack
 
         public override bool Available(BlackjackTableSlot slot)
         {
-            if (!BlackjackConfig.DoubleOffered)
+            if (!BlackjackConfig.Config.DoubleOffered)
             {
                 return false;
             }
@@ -136,15 +136,15 @@ namespace Blackjack
             {
                 return false;
             }
-            if (!BlackjackConfig.DoubleAfterSplit && slot.Hand.IsSplit)
+            if (!BlackjackConfig.Config.DoubleAfterSplit && slot.Hand.IsSplit)
             {
                 return false;
             }
-            if (0 == (BlackjackConfig.DoubleTotalsAllowed & (1 << slot.Hand.Value)))
+            if (0 == (BlackjackConfig.Config.DoubleTotalsAllowed & (1 << slot.Hand.Value)))
             {
                 return false;
             }
-            if (slot.Player.Bank.Balance < BlackjackConfig.DoubleCost * slot.Pot.Balance)
+            if (slot.Player.Bank.Balance < BlackjackConfig.Config.DoubleCost * slot.Pot.Balance)
             {
                 return false;
             }
@@ -154,7 +154,7 @@ namespace Blackjack
 
         public override bool Execute(BlackjackTableSlot slot)
         {
-            slot.Player.Bank.Transfer(slot.Pot, BlackjackConfig.DoubleCost * slot.Pot.Balance);
+            slot.Player.Bank.Transfer(slot.Pot, BlackjackConfig.Config.DoubleCost * slot.Pot.Balance);
             hit.Execute(slot);
             stand.Execute(slot);
             return true;
@@ -178,7 +178,7 @@ namespace Blackjack
             {
                 return false;
             }
-            if (BlackjackConfig.SplitByValue)
+            if (BlackjackConfig.Config.SplitByValue)
             {
                 if (BlackjackHand.CardValue(slot.Hand[0]) != BlackjackHand.CardValue(slot.Hand[1]))
                 {
@@ -189,11 +189,11 @@ namespace Blackjack
             {
                 return false;
             }
-            if (slot.NumSplits >= BlackjackConfig.NumSplitsAllowed)
+            if (slot.NumSplits >= BlackjackConfig.Config.NumSplitsAllowed)
             {
                 return false;
             }
-            if (slot.Player.Bank.Balance < BlackjackConfig.SplitCost * slot.Pot.Balance)
+            if (slot.Player.Bank.Balance < BlackjackConfig.Config.SplitCost * slot.Pot.Balance)
             {
                 return false;
             }
@@ -218,7 +218,7 @@ namespace Blackjack
 
         public override bool Available(BlackjackTableSlot slot)
         {
-            return BlackjackConfig.LateSurrenderOffered && slot.Hand.Count == 2 && !slot.Hand.IsSplit;
+            return BlackjackConfig.Config.LateSurrenderOffered && slot.Hand.Count == 2 && !slot.Hand.IsSplit;
         }
 
         public override bool Execute(BlackjackTableSlot slot)
