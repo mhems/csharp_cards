@@ -174,6 +174,10 @@ namespace Blackjack
 
         public override bool Available(BlackjackTableSlot slot)
         {
+            if (!BlackjackConfig.Config.SplitOffered)
+            {
+                return false;
+            }
             if (slot.Hand.Count > 2)
             {
                 return false;
@@ -193,6 +197,10 @@ namespace Blackjack
             {
                 return false;
             }
+            else if (!BlackjackConfig.Config.ReSplitAces && slot.Hand[0].IsAce && slot.Hand.IsSplit)
+            {
+                return false;
+            }
             if (slot.Player.Bank.Balance < BlackjackConfig.Config.SplitCost * slot.Pot.Balance)
             {
                 return false;
@@ -203,12 +211,15 @@ namespace Blackjack
 
         public override bool Execute(BlackjackTableSlot slot)
         {
+            bool wasAcePair = slot.Hand.IsPair && slot.Hand[0].IsAce;
+
             slot.Split();
             hit.Execute(slot);
             slot.Index++;
             hit.Execute(slot);
             slot.Index--;
-            return false;
+
+            return wasAcePair && !BlackjackConfig.Config.HitSplitAces;
         }
     }
 
