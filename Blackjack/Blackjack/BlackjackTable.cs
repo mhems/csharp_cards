@@ -27,7 +27,8 @@ namespace Blackjack
         private readonly Dictionary<BlackjackActionEnum, BlackjackAction> actionMap = new();
 
         #region Properties
-        private BlackjackTableSlot DealerSlot { get; } = new() { Player = new BlackjackDealer() };
+        public IBlackjackConfig Config { get; set; }
+        private BlackjackTableSlot DealerSlot { get; }
         private Bank TableBank => DealerSlot.Player.Bank;
         private BlackjackHand DealerHand => DealerSlot.Hand;
         public Shoe Shoe { get; private set; }
@@ -44,26 +45,29 @@ namespace Blackjack
         public event EventHandler<EventArgs> RoundBegun;
         public event EventHandler<EventArgs> RoundEnded;
 
-        public BlackjackTable(int numSeats)
+        public BlackjackTable(int numSeats, IBlackjackConfig config)
         {
-            Shoe = new Shoe(BlackjackConfig.Config.NumDecksInShoe);
-            Shoe.CutIndex = Shoe.Count - BlackjackConfig.Config.CutIndex;
-            Shoe.NumBurnOnShuffle = BlackjackConfig.Config.NumBurntOnShuffle;
+            Config = config;
+            Shoe = new Shoe(Config.NumDecksInShoe);
+            Shoe.CutIndex = Shoe.Count - Config.CutIndex;
+            Shoe.NumBurnOnShuffle = Config.NumBurntOnShuffle;
             Count = new(Shoe);
 
             slots = new BlackjackTableSlot[numSeats];
             for (int i = 0; i < numSeats; i++)
             {
-                slots[i] = new BlackjackTableSlot();
+                slots[i] = new BlackjackTableSlot(Config);
             }
+            DealerSlot = new(Config);
+            DealerSlot.Player = new BlackjackDealer(Config);
 
             HitAction hit = new(Shoe);
             StandAction stand = new();
             actionMap.Add(BlackjackActionEnum.Hit, hit);
             actionMap.Add(BlackjackActionEnum.Stand, stand);
-            actionMap.Add(BlackjackActionEnum.Double, new DoubleAction(hit, stand));
-            actionMap.Add(BlackjackActionEnum.Split, new SplitAction(hit));
-            actionMap.Add(BlackjackActionEnum.LateSurrender, new LateSurrenderAction());
+            actionMap.Add(BlackjackActionEnum.Double, new DoubleAction(Config, hit, stand));
+            actionMap.Add(BlackjackActionEnum.Split, new SplitAction(Config, hit));
+            actionMap.Add(BlackjackActionEnum.LateSurrender, new LateSurrenderAction(Config));
         }
 
         public bool SeatPlayer(BlackjackPlayer player, int position = 0)
@@ -116,13 +120,13 @@ namespace Blackjack
 
         private void OfferEarlySurrender()
         {
-            if (BlackjackConfig.Config.EarlySurrenderOffered)
+            if (Config.EarlySurrenderOffered)
             {
                 foreach (BlackjackTableSlot slot in ActiveSlots)
                 {
                     if (slot.OfferEarlySurrender(UpCard))
                     {
-                        slot.Pot.TransferFactor(TableBank, BlackjackConfig.Config.EarlySurrenderCost);
+                        slot.Pot.TransferFactor(TableBank, Config.EarlySurrenderCost);
                         slot.Settled = true;
                     }
                 }
@@ -131,7 +135,7 @@ namespace Blackjack
 
         private void OfferInsurance()
         {
-            if (BlackjackConfig.Config.InsuranceOffered)
+            if (Config.InsuranceOffered)
             {
                 foreach (BlackjackTableSlot slot in ActiveSlots)
                 {
@@ -150,7 +154,7 @@ namespace Blackjack
                 }
                 if (slot.Insured)
                 {
-                    TableBank.Transfer(slot.InsurancePot, BlackjackConfig.Config.InsurancePayoutRatio * slot.InsurancePot.Balance);
+                    TableBank.Transfer(slot.InsurancePot, Config.InsurancePayoutRatio * slot.InsurancePot.Balance);
                 }
                 slot.Settled = true;
             }
@@ -188,7 +192,7 @@ namespace Blackjack
             {
                 if (slot.Hand.IsBlackjack && !DealerHand.IsBlackjack)
                 {
-                    TableBank.Transfer(slot.Pot, BlackjackConfig.Config.BlackjackPayoutRatio * slot.Pot.Balance);
+                    TableBank.Transfer(slot.Pot, Config.BlackjackPayoutRatio * slot.Pot.Balance);
                     slot.Settled = true;
                     break;
                 }
@@ -256,6 +260,7 @@ namespace Blackjack
         private BlackjackPlayer player = null;
 
         #region Properties
+        public IBlackjackConfig Config { get; set; }
         public BlackjackPlayer Player
         {
             get => player;
@@ -283,11 +288,16 @@ namespace Blackjack
         public event EventHandler<EventArgs> RoundEnded;
         #endregion
 
+        public BlackjackTableSlot(IBlackjackConfig config)
+        {
+            Config = config;
+        }
+
         public void BeginRound()
         {
             RoundBegun?.Invoke(this, new EventArgs());
             int amount = player.BettingPolicy.Bet();
-            if (amount < BlackjackConfig.Config.MinimumBet || amount > BlackjackConfig.Config.MaximumBet)
+            if (amount < Config.MinimumBet || amount > Config.MaximumBet)
             {
                 throw new IllegalBetException(amount);
             }
@@ -305,7 +315,7 @@ namespace Blackjack
             bool insured = player.InsurancePolicy.Insure(Hand, upCard);
             if (insured)
             {
-                player.Bank.Transfer(InsurancePot, BlackjackConfig.Config.InsuranceCost * Pot.Balance);
+                player.Bank.Transfer(InsurancePot, Config.InsuranceCost * Pot.Balance);
             }
             return insured;
         }
@@ -319,7 +329,7 @@ namespace Blackjack
             hands.Add(newHand);
 
             pots.Add(new Bank());
-            player.Bank.Transfer(pots[1], pots[0].Balance * BlackjackConfig.Config.SplitCost);
+            player.Bank.Transfer(pots[1], pots[0].Balance * Config.SplitCost);
         }
 
         public void Settle(Bank house, int dealerValue)
@@ -328,7 +338,7 @@ namespace Blackjack
             {
                 if (Surrendered)
                 {
-                    pots[i].TransferFactor(house, BlackjackConfig.Config.LateSurrenderCost);
+                    pots[i].TransferFactor(house, Config.LateSurrenderCost);
                 }
                 else if (hands[i].Value < dealerValue)
                 {
@@ -336,7 +346,7 @@ namespace Blackjack
                 }
                 else if ((dealerValue > 21) || (hands[i].Value > dealerValue))
                 {
-                    house.Transfer(pots[i], BlackjackConfig.Config.PayoutRatio * pots[i].Balance);
+                    house.Transfer(pots[i], Config.PayoutRatio * pots[i].Balance);
                 }
             }
             Settled = true;

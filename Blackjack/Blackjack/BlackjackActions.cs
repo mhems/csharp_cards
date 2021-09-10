@@ -118,17 +118,20 @@ namespace Blackjack
         private readonly HitAction hit;
         private readonly StandAction stand;
 
+        public IBlackjackConfig Config { get; set; }
+
         public override BlackjackActionEnum Kind => BlackjackActionEnum.Double;
 
-        public DoubleAction(HitAction hit, StandAction stand)
+        public DoubleAction(IBlackjackConfig config, HitAction hit, StandAction stand)
         {
+            this.Config = config;
             this.hit = hit;
             this.stand = stand;
         }
 
         public override bool Available(BlackjackTableSlot slot)
         {
-            if (!BlackjackConfig.Config.DoubleOffered)
+            if (!Config.DoubleOffered)
             {
                 return false;
             }
@@ -136,15 +139,15 @@ namespace Blackjack
             {
                 return false;
             }
-            if (!BlackjackConfig.Config.DoubleAfterSplit && slot.Hand.IsSplit)
+            if (!Config.DoubleAfterSplit && slot.Hand.IsSplit)
             {
                 return false;
             }
-            if (0 == (BlackjackConfig.Config.DoubleTotalsAllowed & (1 << slot.Hand.Value)))
+            if (0 == (Config.DoubleTotalsAllowed & (1 << slot.Hand.Value)))
             {
                 return false;
             }
-            if (slot.Player.Bank.Balance < BlackjackConfig.Config.DoubleCost * slot.Pot.Balance)
+            if (slot.Player.Bank.Balance < Config.DoubleCost * slot.Pot.Balance)
             {
                 return false;
             }
@@ -154,7 +157,7 @@ namespace Blackjack
 
         public override bool Execute(BlackjackTableSlot slot)
         {
-            slot.Player.Bank.Transfer(slot.Pot, BlackjackConfig.Config.DoubleCost * slot.Pot.Balance);
+            slot.Player.Bank.Transfer(slot.Pot, Config.DoubleCost * slot.Pot.Balance);
             hit.Execute(slot);
             stand.Execute(slot);
             return true;
@@ -165,16 +168,19 @@ namespace Blackjack
     {
         private readonly HitAction hit;
 
+        public IBlackjackConfig Config { get; set; }
+
         public override BlackjackActionEnum Kind => BlackjackActionEnum.Split;
 
-        public SplitAction(HitAction hit)
+        public SplitAction(IBlackjackConfig config, HitAction hit)
         {
             this.hit = hit;
+            this.Config = config;
         }
 
         public override bool Available(BlackjackTableSlot slot)
         {
-            if (!BlackjackConfig.Config.SplitOffered)
+            if (!Config.SplitOffered)
             {
                 return false;
             }
@@ -182,7 +188,7 @@ namespace Blackjack
             {
                 return false;
             }
-            if (BlackjackConfig.Config.SplitByValue)
+            if (Config.SplitByValue)
             {
                 if (BlackjackHand.CardValue(slot.Hand[0]) != BlackjackHand.CardValue(slot.Hand[1]))
                 {
@@ -193,15 +199,15 @@ namespace Blackjack
             {
                 return false;
             }
-            if (slot.NumSplits >= BlackjackConfig.Config.NumSplitsAllowed)
+            if (slot.NumSplits >= Config.NumSplitsAllowed)
             {
                 return false;
             }
-            else if (!BlackjackConfig.Config.ReSplitAces && slot.Hand[0].IsAce && slot.Hand.IsSplit)
+            else if (!Config.ReSplitAces && slot.Hand[0].IsAce && slot.Hand.IsSplit)
             {
                 return false;
             }
-            if (slot.Player.Bank.Balance < BlackjackConfig.Config.SplitCost * slot.Pot.Balance)
+            if (slot.Player.Bank.Balance < Config.SplitCost * slot.Pot.Balance)
             {
                 return false;
             }
@@ -219,17 +225,23 @@ namespace Blackjack
             hit.Execute(slot);
             slot.Index--;
 
-            return wasAcePair && !BlackjackConfig.Config.HitSplitAces;
+            return wasAcePair && !Config.HitSplitAces;
         }
     }
 
     public class LateSurrenderAction : BlackjackAction
     {
+        public IBlackjackConfig Config { get; }
         public override BlackjackActionEnum Kind => BlackjackActionEnum.LateSurrender;
+
+        public LateSurrenderAction(IBlackjackConfig config)
+        {
+            Config = config;
+        }
 
         public override bool Available(BlackjackTableSlot slot)
         {
-            return BlackjackConfig.Config.LateSurrenderOffered && slot.Hand.Count == 2 && !slot.Hand.IsSplit;
+            return Config.LateSurrenderOffered && slot.Hand.Count == 2 && !slot.Hand.IsSplit;
         }
 
         public override bool Execute(BlackjackTableSlot slot)

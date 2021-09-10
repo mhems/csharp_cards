@@ -140,6 +140,13 @@ namespace Blackjack
 
     public class BasicEarlySurrenderPolicy : BlackjackEarlySurrenderPolicy
     {
+        public IBlackjackConfig Config { get; }
+
+        public BasicEarlySurrenderPolicy(IBlackjackConfig config)
+        {
+            Config = config;
+        }
+
         protected override bool SurrenderInner(BlackjackHand hand, Card upCard)
         {
             if (upCard.IsAce)
@@ -148,7 +155,7 @@ namespace Blackjack
                 {
                     return ((hand.Value >= 5 && hand.Value <= 7) ||
                         (hand.Value >= 12 && hand.Value <= 17) ||
-                        (BlackjackConfig.Config.DealerHitsSoft17 && hand.Value == 4));
+                        (Config.DealerHitsSoft17 && hand.Value == 4));
                 }
                 else
                 {

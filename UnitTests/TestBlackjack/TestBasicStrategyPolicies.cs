@@ -33,7 +33,8 @@ namespace TestBlackjack
         [TestMethod]
         public void TestEarlySurrender()
         {
-            BasicEarlySurrenderPolicy policy = new();
+            StandardBlackjackConfig cfg = new();
+            BasicEarlySurrenderPolicy policy = new(cfg);
             // TODO
         }
     }

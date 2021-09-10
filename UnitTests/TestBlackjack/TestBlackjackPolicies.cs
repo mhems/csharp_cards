@@ -12,6 +12,14 @@ namespace TestBlackjack
     [TestClass]
     public class TestBlackjackPolicies
     {
+        private IBlackjackConfig cfg;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            cfg = new StandardBlackjackConfig();
+        }
+
         [TestMethod]
         public void TestDealerPolicy()
         {
@@ -19,7 +27,7 @@ namespace TestBlackjack
             Card six = CardFactory.GetCard(Card.RankEnum.Six, Card.SuitEnum.Clubs);
             Card seven = CardFactory.GetCard(Card.RankEnum.Seven, Card.SuitEnum.Clubs);
             Card ace = CardFactory.GetCard(Card.RankEnum.Ace, Card.SuitEnum.Clubs);
-            DealerDecisionPolicy policy = new();
+            DealerDecisionPolicy policy = new(cfg);
             BlackjackHand belowHand = new(six, six);
             BlackjackHand hard17 = new(ten, seven);
             BlackjackHand soft17 = new(ace, six);
@@ -35,8 +43,8 @@ namespace TestBlackjack
         [TestMethod]
         public void TestMinBetPolicy()
         {
-            MinimumBettingPolicy policy = new();
-            Assert.AreEqual(BlackjackConfig.Config.MinimumBet, policy.Bet());
+            MinimumBettingPolicy policy = new(cfg);
+            Assert.AreEqual(cfg.MinimumBet, policy.Bet());
         }
 
         [TestMethod]

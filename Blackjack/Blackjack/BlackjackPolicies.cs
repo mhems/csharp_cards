@@ -38,6 +38,13 @@ namespace Blackjack
 
     public class DealerDecisionPolicy : BlackjackDecisionPolicy
     {
+        public IBlackjackConfig Config { get; }
+
+        public DealerDecisionPolicy(IBlackjackConfig config)
+        {
+            Config = config;
+        }
+
         protected override BlackjackActionEnum DecideInner(BlackjackHand hand, Card card, HashSet<BlackjackActionEnum> _)
         {
             int value = hand.Value;
@@ -45,7 +52,7 @@ namespace Blackjack
             {
                 return BlackjackActionEnum.Hit;
             }
-            else if (BlackjackConfig.Config.DealerHitsSoft17 && hand.IsSoft && value == 17)
+            else if (Config.DealerHitsSoft17 && hand.IsSoft && value == 17)
             {
                 return BlackjackActionEnum.Hit;
             }
@@ -60,9 +67,15 @@ namespace Blackjack
 
     public class MinimumBettingPolicy : BlackjackBettingPolicy
     {
+        public IBlackjackConfig Config { get; }
+
+        public MinimumBettingPolicy(IBlackjackConfig config)
+        {
+            Config = config;
+        }
         public override int Bet()
         {
-            return BlackjackConfig.Config.MinimumBet;
+            return Config.MinimumBet;
         }
     }
 

@@ -12,12 +12,14 @@ namespace TestBlackjack
     [TestClass]
     public class TestBlackjackActions
     {
+        private IBlackjackConfig cfg;
         private HitAction hit;
         private StandAction stand; 
 
         [TestInitialize]
         public void Setup()
         {
+            cfg = new StandardBlackjackConfig();
             Shoe shoe = new(1);
             hit = new(shoe);
             stand = new();
@@ -40,21 +42,21 @@ namespace TestBlackjack
         [TestMethod]
         public void TestDouble()
         {
-            DoubleAction double_ = new(hit, stand);
+            DoubleAction double_ = new(cfg, hit, stand);
             Assert.AreEqual(BlackjackActionEnum.Double.ToString(), double_.ToString());
         }
 
         [TestMethod]
         public void TestSplit()
         {
-            SplitAction split = new(hit);
+            SplitAction split = new(cfg, hit);
             Assert.AreEqual(BlackjackActionEnum.Split.ToString(), split.ToString());
         }
 
         [TestMethod]
         public void TestSurrender()
         {
-            LateSurrenderAction surrender = new();
+            LateSurrenderAction surrender = new(cfg);
             Assert.AreEqual(BlackjackActionEnum.LateSurrender.ToString(), surrender.ToString());
         }
     }

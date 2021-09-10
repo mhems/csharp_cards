@@ -5,12 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Blackjack
-{    
-    public static class BlackjackConfig
-    {
-        public static IBlackjackConfig Config { get;} = new StaticBlackjackConfig();
-    }
-
+{
     public interface IBlackjackConfig
     {
         public bool DealerHitsSoft17 { get; }
@@ -48,7 +43,7 @@ namespace Blackjack
         public double InsurancePayoutRatio { get; }
     }
 
-    public class StaticBlackjackConfig : IBlackjackConfig
+    public class StandardBlackjackConfig : IBlackjackConfig
     {
         public bool DealerHitsSoft17 { get; } = true;
 
