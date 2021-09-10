@@ -330,8 +330,7 @@ namespace Blackjack
 
         public bool OfferEarlySurrender(Card upCard)
         {
-            BlackjackActionEnum decision = player.DecisionPolicy.Decide(Hand, upCard, SurrenderSet);
-            return decision == BlackjackActionEnum.LateSurrender;
+            return player.EarlySurrenderPolicy.Surrender(Hand, upCard);
         }
 
         public bool OfferInsurance(Card upCard)

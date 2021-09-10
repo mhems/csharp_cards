@@ -62,7 +62,26 @@ namespace Blackjack
 
     public abstract class BlackjackBettingPolicy
     {
-        public abstract int Bet();
+        public event EventHandler<BlackjackBetEventArgs> Betting;
+
+        public int Bet()
+        {
+            int amount = BetInner();
+            Betting?.Invoke(this, new BlackjackBetEventArgs(amount));
+            return amount;
+        }
+
+        protected abstract int BetInner();
+    }
+
+    public class BlackjackBetEventArgs : EventArgs
+    {
+        public int Amount { get; }
+
+        public BlackjackBetEventArgs(int amount)
+        {
+            Amount = amount;
+        }
     }
 
     public class MinimumBettingPolicy : BlackjackBettingPolicy
@@ -73,7 +92,7 @@ namespace Blackjack
         {
             Config = config;
         }
-        public override int Bet()
+        protected override int BetInner()
         {
             return Config.MinimumBet;
         }

@@ -10,6 +10,7 @@ namespace Blackjack
     public class BlackjackPlayer : Player
     {
         public BlackjackDecisionPolicy DecisionPolicy { get; set; }
+        public BlackjackEarlySurrenderPolicy EarlySurrenderPolicy { get; set; }
         public BlackjackBettingPolicy BettingPolicy { get; set; }
         public BlackjackInsurancePolicy InsurancePolicy { get; set; }
 
@@ -17,6 +18,18 @@ namespace Blackjack
         {
             add { DecisionPolicy.Decided += value; }
             remove { DecisionPolicy.Decided -= value; }
+        }
+
+        public event EventHandler<BlackjackEarlySurrenderEventArgs> Surrendered
+        {
+            add { EarlySurrenderPolicy.Surrendered += value; }
+            remove { EarlySurrenderPolicy.Surrendered -= value; }
+        }
+
+        public event EventHandler<BlackjackBetEventArgs> Betting
+        {
+            add { BettingPolicy.Betting += value; }
+            remove { BettingPolicy.Betting -= value; }
         }
 
         public event EventHandler<BlackjackInsuranceEventArgs> Insured
