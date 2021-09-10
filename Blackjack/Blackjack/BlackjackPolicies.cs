@@ -45,7 +45,7 @@ namespace Blackjack
             {
                 return BlackjackActionEnum.Hit;
             }
-            else if (hand.IsSoft && value == 17)
+            else if (BlackjackConfig.DealerHitsSoft17 && hand.IsSoft && value == 17)
             {
                 return BlackjackActionEnum.Hit;
             }
@@ -60,15 +60,9 @@ namespace Blackjack
 
     public class MinimumBettingPolicy : BlackjackBettingPolicy
     {
-        public int Amount { get; private set; }
-
-        public MinimumBettingPolicy(int amount)
-        {
-            Amount = amount;
-        }
         public override int Bet()
         {
-            return Amount;
+            return BlackjackConfig.MinimumBet;
         }
     }
 

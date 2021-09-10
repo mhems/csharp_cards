@@ -17,7 +17,7 @@ namespace Blackjack
         public bool IsPair => (Count == 2) && (this[0].Rank == this[1].Rank);
         public bool IsBust => Value > 21;
         public bool IsBlackjack => Value == 21;
-        public bool IsNaturalBlackjack => IsBlackjack && (Count == 2) && !IsSplit;
+        public bool IsNaturalBlackjack => (Count == 2) && !IsSplit && IsBlackjack;
         public bool IsSplit { get; internal set; } = false;
         #endregion
 

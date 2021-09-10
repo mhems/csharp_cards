@@ -19,6 +19,7 @@ namespace Cards
         public EventHandler<BankTransactionEventArgs> Deposited;
 
         public int Balance { get; protected set; } = 0;
+        public Func<double, int> Round { get; set; } = d => (int)Math.Floor(d);
 
         public Bank(int balance = 0)
         {
@@ -29,7 +30,17 @@ namespace Cards
             Balance = balance;
         }
 
-        public virtual void TransactTo(Bank recipient, int amount)
+        public virtual void TransferFactor(Bank recipient, double factor)
+        {
+            Transfer(recipient, Balance * factor);
+        }
+
+        public virtual void Transfer(Bank recipient)
+        {
+            Transfer(recipient, Balance);
+        }
+
+        public virtual void Transfer(Bank recipient, double amount)
         {
             if (recipient == null)
             {
@@ -41,6 +52,11 @@ namespace Cards
             }
             Withdraw(amount);
             recipient.Deposit(amount);
+        }
+
+        public virtual int Withdraw(double amount)
+        {
+            return Withdraw(Round(amount));
         }
 
         public virtual int Withdraw(int amount)
@@ -58,6 +74,11 @@ namespace Cards
             return amount;
         }
 
+        public virtual void Deposit(double amount)
+        {
+            Deposit(Round(amount));
+        }
+
         public virtual void Deposit(int amount)
         {
             if (amount < 0)
@@ -67,7 +88,6 @@ namespace Cards
             Balance += amount;
             Deposited?.Invoke(this, new BankTransactionEventArgs(amount, Balance));
         }
-
     }
 
     public class HouseBank : Bank

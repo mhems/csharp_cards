@@ -13,7 +13,7 @@ namespace TestCards
     {
         private bool spentCalled;
         private bool earnedCalled;
-        private int amount;
+        private double amount;
 
         private void SpentHandler(object obj, BankTransactionEventArgs args)
         {

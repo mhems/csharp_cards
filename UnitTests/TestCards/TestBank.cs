@@ -13,8 +13,8 @@ namespace TestCards
     {
         private bool gotDepositEvent;
         private bool gotWithdrawEvent;
-        private int eventAmount;
-        private int eventBalance;
+        private double eventAmount;
+        private double eventBalance;
 
         [TestInitialize]
         public void Setup()
@@ -93,10 +93,10 @@ namespace TestCards
             donor.Withdrawn += WithdrawHandler;
             donee.Deposited += DepositHandler;
 
-            Assert.ThrowsException<ArgumentException>(() => donor.TransactTo(null, 0));
-            Assert.ThrowsException<ArgumentException>(() => donor.TransactTo(donee, -10));
+            Assert.ThrowsException<ArgumentException>(() => donor.Transfer(null, 0));
+            Assert.ThrowsException<ArgumentException>(() => donor.Transfer(donee, -10));
 
-            donor.TransactTo(donee, 50);
+            donor.Transfer(donee, 50);
             Assert.AreEqual(50, donor.Balance);
             Assert.AreEqual(50, donee.Balance);
         }

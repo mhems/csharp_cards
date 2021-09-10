@@ -215,7 +215,7 @@ namespace TestCards
             for (int n = 0; n < 10; n++)
             {
                 int delta = NumDifferent(firstDeal, secondDeal);
-                Assert.IsTrue(delta >= (int)(0.95 * 52));
+                Assert.IsTrue(delta >= (int)(0.9 * 52));
                 firstDeal = deck.Deal(52);
                 secondDeal = deck.Deal(52);
             }

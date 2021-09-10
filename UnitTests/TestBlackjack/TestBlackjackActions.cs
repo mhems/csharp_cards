@@ -54,8 +54,8 @@ namespace TestBlackjack
         [TestMethod]
         public void TestSurrender()
         {
-            SurrenderAction surrender = new();
-            Assert.AreEqual(BlackjackActionEnum.Surrender.ToString(), surrender.ToString());
+            LateSurrenderAction surrender = new();
+            Assert.AreEqual(BlackjackActionEnum.LateSurrender.ToString(), surrender.ToString());
         }
     }
 }

@@ -17,6 +17,7 @@ namespace Cards
         public int Count => cards.Count;
         public bool IsExhausted => NumCardsRemaining == 0;
         public int NumCardsRemaining => CutIndex - Index;
+        public int NumBurnOnShuffle { get; set; } = 0;
 
         public event EventHandler Shuffling;
         public event EventHandler Exhausted;
@@ -93,6 +94,7 @@ namespace Cards
                 cards[n] = temp;
             }
             Index = 0;
+            Burn(NumBurnOnShuffle);
         }
 
         public class DealtEventArgs : EventArgs

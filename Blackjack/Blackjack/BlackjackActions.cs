@@ -13,7 +13,7 @@ namespace Blackjack
         Stand,
         Double,
         Split,
-        Surrender
+        LateSurrender
     }
 
     public class ActionUnavailableException : Exception
@@ -128,7 +128,7 @@ namespace Blackjack
 
         public override bool Available(BlackjackTableSlot slot)
         {
-            if (slot.Player.Bank.Balance < 10)
+            if (!BlackjackConfig.DoubleOffered)
             {
                 return false;
             }
@@ -136,12 +136,25 @@ namespace Blackjack
             {
                 return false;
             }
+            if (!BlackjackConfig.DoubleAfterSplit && slot.Hand.IsSplit)
+            {
+                return false;
+            }
+            if (0 == (BlackjackConfig.DoubleTotalsAllowed & (1 << slot.Hand.Value)))
+            {
+                return false;
+            }
+            if (slot.Player.Bank.Balance < BlackjackConfig.DoubleCost * slot.Pot.Balance)
+            {
+                return false;
+            }
+
             return true;
         }
 
         public override bool Execute(BlackjackTableSlot slot)
         {
-            slot.Player.Bank.TransactTo(slot.Pot, 10);
+            slot.Player.Bank.Transfer(slot.Pot, BlackjackConfig.DoubleCost * slot.Pot.Balance);
             hit.Execute(slot);
             stand.Execute(slot);
             return true;
@@ -161,25 +174,35 @@ namespace Blackjack
 
         public override bool Available(BlackjackTableSlot slot)
         {
-            if (slot.Player.Bank.Balance < 10)
-            {
-                return false;
-            }
             if (slot.Hand.Count > 2)
             {
                 return false;
             }
-            if (!slot.Hand.IsPair)
+            if (BlackjackConfig.SplitByValue)
+            {
+                if (BlackjackHand.CardValue(slot.Hand[0]) != BlackjackHand.CardValue(slot.Hand[1]))
+                {
+                    return false;
+                }
+            }
+            else if (!slot.Hand.IsPair)
             {
                 return false;
             }
+            if (slot.NumSplits >= BlackjackConfig.NumSplitsAllowed)
+            {
+                return false;
+            }
+            if (slot.Player.Bank.Balance < BlackjackConfig.SplitCost * slot.Pot.Balance)
+            {
+                return false;
+            }
+
             return true;
         }
 
         public override bool Execute(BlackjackTableSlot slot)
         {
-            slot.Player.Bank.TransactTo(slot.Pot, slot.Pot.Balance);
-
             slot.Split();
             hit.Execute(slot);
             slot.Index++;
@@ -189,19 +212,18 @@ namespace Blackjack
         }
     }
 
-    public class SurrenderAction : BlackjackAction
+    public class LateSurrenderAction : BlackjackAction
     {
-        public override BlackjackActionEnum Kind => BlackjackActionEnum.Surrender;
+        public override BlackjackActionEnum Kind => BlackjackActionEnum.LateSurrender;
 
         public override bool Available(BlackjackTableSlot slot)
         {
-            return slot.Hand.Count == 2 && !slot.Hand.IsSplit;
+            return BlackjackConfig.LateSurrenderOffered && slot.Hand.Count == 2 && !slot.Hand.IsSplit;
         }
 
         public override bool Execute(BlackjackTableSlot slot)
         {
             slot.Surrendered = true;
-            slot.Pot.TransactTo(slot.Player.Bank, slot.Pot.Balance / 2);
             return true;
         }
     }

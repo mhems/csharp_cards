@@ -14,31 +14,41 @@ namespace Blackjack
         public TableFullException(string msg, Exception inner) : base(msg, inner) { }
     }
 
+    public class IllegalBetException : Exception
+    {
+        private static string Msg = "Illegal bet of ${0}";
+        public IllegalBetException(int amount): base(String.Format(Msg, amount)) { }
+        public IllegalBetException(int amount, Exception inner) : base(String.Format(Msg, amount), inner) {  }
+    }
+
     public class BlackjackTable
     {
         private readonly BlackjackTableSlot[] slots;
         private readonly Dictionary<BlackjackActionEnum, BlackjackAction> actionMap = new();
 
+        #region Properties
         private BlackjackTableSlot DealerSlot { get; } = new() { Player = new BlackjackDealer() };
         private Bank TableBank => DealerSlot.Player.Bank;
         private BlackjackHand DealerHand => DealerSlot.Hand;
-
         public Shoe Shoe { get; private set; }
         public Card UpCard => DealerSlot.Hand[1];
-
         public int NumVacancies => NumSlots - NumOccupiedSlots;
         public bool TableFull => NumVacancies == 0;
         public int NumSlots => slots.Length;
         public int NumOccupiedSlots => slots.Where(s => s.Occupied).Count();
-        public int NumActiveSlots => ActiveSlots.Count();
+        public int NumActiveSlots => ActiveSlots.Length;
         public BlackjackTableSlot[] ActiveSlots => slots.Where(s => s.Active).ToArray();
+        #endregion
 
         public event EventHandler<EventArgs> RoundBegun;
         public event EventHandler<EventArgs> RoundEnded;
 
         public BlackjackTable(int numSeats)
         {
-            Shoe = new Shoe(6);
+            Shoe = new Shoe(BlackjackConfig.NumDecksInShoe);
+            Shoe.CutIndex = Shoe.Count - BlackjackConfig.CutIndex;
+            Shoe.NumBurnOnShuffle = BlackjackConfig.NumBurntOnShuffle;
+
             slots = new BlackjackTableSlot[numSeats];
             for (int i = 0; i < numSeats; i++)
             {
@@ -51,7 +61,7 @@ namespace Blackjack
             actionMap.Add(BlackjackActionEnum.Stand, stand);
             actionMap.Add(BlackjackActionEnum.Double, new DoubleAction(hit, stand));
             actionMap.Add(BlackjackActionEnum.Split, new SplitAction(hit));
-            actionMap.Add(BlackjackActionEnum.Surrender, new SurrenderAction());
+            actionMap.Add(BlackjackActionEnum.LateSurrender, new LateSurrenderAction());
         }
 
         public bool SeatPlayer(BlackjackPlayer player, int position = 0)
@@ -104,22 +114,27 @@ namespace Blackjack
 
         private void OfferEarlySurrender()
         {
-            foreach (BlackjackTableSlot slot in ActiveSlots)
+            if (BlackjackConfig.EarlySurrenderOffered)
             {
-                if (slot.OfferEarlySurrender(UpCard))
+                foreach (BlackjackTableSlot slot in ActiveSlots)
                 {
-                    actionMap[BlackjackActionEnum.Surrender].Act(slot);
-                    slot.Pot.TransactTo(TableBank, slot.Pot.Balance / 2);
-                    slot.Settled = true;
+                    if (slot.OfferEarlySurrender(UpCard))
+                    {
+                        slot.Pot.TransferFactor(TableBank, BlackjackConfig.EarlySurrenderCost);
+                        slot.Settled = true;
+                    }
                 }
             }
         }
 
         private void OfferInsurance()
         {
-            foreach (BlackjackTableSlot slot in ActiveSlots)
+            if (BlackjackConfig.InsuranceOffered)
             {
-                slot.OfferInsurance(UpCard);
+                foreach (BlackjackTableSlot slot in ActiveSlots)
+                {
+                    slot.OfferInsurance(UpCard);
+                }
             }
         }
 
@@ -127,10 +142,13 @@ namespace Blackjack
         {
             foreach (BlackjackTableSlot slot in ActiveSlots)
             {
-                slot.Pot.TransactTo(TableBank, 10);
+                if (!slot.Hand.IsNaturalBlackjack)
+                {
+                    slot.Pot.Transfer(TableBank);
+                }
                 if (slot.Insured)
                 {
-                    TableBank.TransactTo(slot.Pot, 10);
+                    TableBank.Transfer(slot.InsurancePot, BlackjackConfig.InsurancePayoutRatio * slot.InsurancePot.Balance);
                 }
                 slot.Settled = true;
             }
@@ -142,8 +160,7 @@ namespace Blackjack
             {
                 if (slot.Insured)
                 {
-                    slot.Player.Bank.TransactTo(TableBank, 5);
-                    slot.Pot.TransactTo(TableBank, 5);
+                    slot.InsurancePot.Transfer(TableBank);
                 }
             }
         }
@@ -167,17 +184,15 @@ namespace Blackjack
         {
             while (true)
             {
-                BlackjackHand hand = slot.Hand;
-                if (hand.IsBlackjack)
+                if (slot.Hand.IsBlackjack && !DealerHand.IsBlackjack)
                 {
-                    int payout = (int)Math.Ceiling(1.5 * slot.Pot.Balance);
-                    TableBank.TransactTo(slot.Pot, payout);
+                    TableBank.Transfer(slot.Pot, BlackjackConfig.BlackjackPayoutRatio * slot.Pot.Balance);
                     slot.Settled = true;
                     break;
                 }
-                else if (hand.IsBust)
+                else if (slot.Hand.IsBust)
                 {
-                    slot.Pot.TransactTo(TableBank, slot.Pot.Balance);
+                    slot.Pot.Transfer(TableBank);
                     slot.Settled = true;
                     break;
                 }
@@ -222,7 +237,7 @@ namespace Blackjack
 
         private void EndRound()
         {
-            foreach (BlackjackTableSlot slot in ActiveSlots)
+            foreach (BlackjackTableSlot slot in slots.Where(s => s.Occupied))
             {
                 slot.EndRound();
             }
@@ -233,7 +248,7 @@ namespace Blackjack
 
     public class BlackjackTableSlot
     {
-        private static readonly HashSet<BlackjackActionEnum> SurrenderSet = new() { BlackjackActionEnum.Surrender };
+        private static readonly HashSet<BlackjackActionEnum> SurrenderSet = new() { BlackjackActionEnum.LateSurrender };
         private readonly List<BlackjackHand> hands = new();
         private readonly List<Bank> pots = new() { new() };
         private BlackjackPlayer player = null;
@@ -248,20 +263,16 @@ namespace Blackjack
                 player = value;
             }
         }
-
         internal int Index { get; set; }
-        public bool Insured { get; private set; }
+        public bool Insured => InsurancePot.Balance > 0;
         public bool Surrendered { get; internal set; }
         public bool Settled { get; set; }
         public int NumSplits => hands.Count - 1;
-        public bool Active => pots[0].Balance> 0;
+        public bool Active => pots[0].Balance > 0;
         public bool Occupied => Player != null;
         public BlackjackHand Hand { get => hands[Index]; internal set => hands[Index] = value; }
-        public Bank Pot
-        {
-            get => pots[Index];
-            set => pots[Index] = value;
-        }
+        public Bank Pot => pots[Index];
+        public Bank InsurancePot { get; private set; } = new();
         #endregion
 
         #region Events
@@ -274,23 +285,27 @@ namespace Blackjack
         {
             RoundBegun?.Invoke(this, new EventArgs());
             int amount = player.BettingPolicy.Bet();
-            player.Bank.TransactTo(Pot, amount);
+            if (amount < BlackjackConfig.MinimumBet || amount > BlackjackConfig.MaximumBet)
+            {
+                throw new IllegalBetException(amount);
+            }
+            player.Bank.Transfer(Pot, amount);
         }
 
         public bool OfferEarlySurrender(Card upCard)
         {
             BlackjackActionEnum decision = player.DecisionPolicy.Decide(Hand, upCard, SurrenderSet);
-            return decision == BlackjackActionEnum.Surrender;
+            return decision == BlackjackActionEnum.LateSurrender;
         }
 
         public bool OfferInsurance(Card upCard)
         {
-            Insured = player.InsurancePolicy.Insure(Hand, upCard);
-            if (Insured)
+            bool insured = player.InsurancePolicy.Insure(Hand, upCard);
+            if (insured)
             {
-                player.Bank.TransactTo(Pot, 5);
+                player.Bank.Transfer(InsurancePot, BlackjackConfig.InsuranceCost * Pot.Balance);
             }
-            return Insured;
+            return insured;
         }
 
         public void Split()
@@ -302,20 +317,24 @@ namespace Blackjack
             hands.Add(newHand);
 
             pots.Add(new Bank());
-            player.Bank.TransactTo(pots[1], 10);
+            player.Bank.Transfer(pots[1], pots[0].Balance * BlackjackConfig.SplitCost);
         }
 
         public void Settle(Bank house, int dealerValue)
         {
             for (int i = 0; i < NumSplits; i++)
             {
-                if (Surrendered || (hands[i].Value < dealerValue))
+                if (Surrendered)
                 {
-                    pots[i].TransactTo(house, pots[i].Balance);
+                    pots[i].TransferFactor(house, BlackjackConfig.LateSurrenderCost);
+                }
+                else if (hands[i].Value < dealerValue)
+                {
+                    pots[i].Transfer(house);
                 }
                 else if ((dealerValue > 21) || (hands[i].Value > dealerValue))
                 {
-                    house.TransactTo(pots[i], 10);
+                    house.Transfer(pots[i], BlackjackConfig.PayoutRatio * pots[i].Balance);
                 }
             }
             Settled = true;
@@ -327,15 +346,17 @@ namespace Blackjack
 
             foreach (Bank pot in pots)
             {
-                pot.TransactTo(player.Bank, pot.Balance);
+                pot.Transfer(player.Bank);
             }
+            InsurancePot.Transfer(player.Bank);
+
             pots.RemoveRange(1, pots.Count - 1);
-            Pot = new();
+            pots[0] = new();
+            InsurancePot = new();
 
             hands.RemoveRange(1, hands.Count - 1);
             Hand.Clear();
 
-            Insured = false;
             Settled = false;
 
             RoundEnded?.Invoke(this, new EventArgs());

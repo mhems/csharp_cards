@@ -35,8 +35,8 @@ namespace TestBlackjack
         [TestMethod]
         public void TestMinBetPolicy()
         {
-            MinimumBettingPolicy policy = new(5);
-            Assert.AreEqual(5, policy.Bet());
+            MinimumBettingPolicy policy = new();
+            Assert.AreEqual(BlackjackConfig.MinimumBet, policy.Bet());
         }
 
         [TestMethod]
