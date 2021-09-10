@@ -28,12 +28,12 @@ namespace Blackjack
 
         #region Properties
         public IBlackjackConfig Config { get; set; }
-        private BlackjackTableSlot DealerSlot { get; }
-        private Bank TableBank => DealerSlot.Player.Bank;
-        private BlackjackHand DealerHand => DealerSlot.Hand;
+        public Bank TableBank { get; } = new HouseBank();
+        public BlackjackDealer Dealer { get; set; }
+        public BlackjackHand DealerHand { get; internal set; }
         public Shoe Shoe { get; private set; }
         public BlackjackCount Count { get; private set; }
-        public Card UpCard => DealerSlot.Hand[1];
+        public Card UpCard => DealerHand[1];
         public int NumVacancies => NumSlots - NumOccupiedSlots;
         public bool TableFull => NumVacancies == 0;
         public int NumSlots => slots.Length;
@@ -58,8 +58,9 @@ namespace Blackjack
             {
                 slots[i] = new BlackjackTableSlot(Config);
             }
-            DealerSlot = new(Config);
-            DealerSlot.Player = new BlackjackDealer(Config);
+
+            Dealer = new(Config);
+            DealerHand = new();
 
             HitAction hit = new(Shoe);
             StandAction stand = new();
@@ -113,7 +114,8 @@ namespace Blackjack
                     CollectInsurance();
                 }
             }
-            DealSlots();
+            DealPlayers();
+            DealDealer();
             Settle();
             EndRound();
         }
@@ -171,7 +173,7 @@ namespace Blackjack
             }
         }
 
-        private void DealSlots()
+        private void DealPlayers()
         {
             foreach (BlackjackTableSlot slot in slots)
             {
@@ -183,7 +185,30 @@ namespace Blackjack
                     i++;
                 }
             }
-            DealHand(DealerSlot);
+        }
+
+        private void DealDealer()
+        {
+            while (true)
+            {
+                if (DealerHand.IsBlackjack)
+                {
+                    break;
+                }
+                else if (DealerHand.IsBust)
+                {
+                    break;
+                }
+                BlackjackActionEnum action = Dealer.DecisionPolicy.Decide(DealerHand, UpCard, null);
+                if (action == BlackjackActionEnum.Stand)
+                {
+                    break;
+                }
+                else
+                {
+                    DealerHand.Add(Shoe.Deal(1)[0]);
+                }
+            }
         }
 
         private void DealHand(BlackjackTableSlot slot)
@@ -226,7 +251,6 @@ namespace Blackjack
             {
                 slot.BeginRound();
             }
-            DealerSlot.BeginRound();
         }
 
         private void Deal()
@@ -247,7 +271,7 @@ namespace Blackjack
             {
                 slot.EndRound();
             }
-            DealerSlot.EndRound();
+            DealerHand.Clear();
             RoundEnded?.Invoke(this, new EventArgs());
         }
     }
@@ -340,13 +364,13 @@ namespace Blackjack
                 {
                     pots[i].TransferFactor(house, Config.LateSurrenderCost);
                 }
-                else if (hands[i].Value < dealerValue)
-                {
-                    pots[i].Transfer(house);
-                }
                 else if ((dealerValue > 21) || (hands[i].Value > dealerValue))
                 {
                     house.Transfer(pots[i], Config.PayoutRatio * pots[i].Balance);
+                }
+                else if (hands[i].Value < dealerValue)
+                {
+                    pots[i].Transfer(house);
                 }
             }
             Settled = true;
