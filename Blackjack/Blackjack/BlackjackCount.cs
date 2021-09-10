@@ -31,11 +31,13 @@ namespace Blackjack
             { BlackjackCountEnum.ZenCount, new List<float>() {1, 1, 2, 2, 2, 1, 0,  0, -2, -1 } }
         };
         private readonly Dictionary<BlackjackCountEnum, float> countMap = new();
+        private Shoe shoe;
 
         public BlackjackCount(Shoe shoe)
         {
-            shoe.Dealt += DealtHandler;
-            shoe.Shuffling += ShuffledHandler;
+            this.shoe = shoe;
+            this.shoe.Dealt += DealtHandler;
+            this.shoe.Shuffling += ShuffledHandler;
             foreach (BlackjackCountEnum system in Enum.GetValues(typeof(BlackjackCountEnum)))
             {
                 countMap.Add(system, 0);
@@ -50,6 +52,12 @@ namespace Blackjack
             {
                 countMap[system] = 0;
             }
+        }
+
+        public void ClearHandlers()
+        {
+            shoe.Dealt -= DealtHandler;
+            shoe.Shuffling -= ShuffledHandler;
         }
 
         private void DealtHandler(object _, Shoe.DealtEventArgs args)

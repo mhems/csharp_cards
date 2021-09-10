@@ -31,6 +31,7 @@ namespace Blackjack
         private Bank TableBank => DealerSlot.Player.Bank;
         private BlackjackHand DealerHand => DealerSlot.Hand;
         public Shoe Shoe { get; private set; }
+        public BlackjackCount Count { get; private set; }
         public Card UpCard => DealerSlot.Hand[1];
         public int NumVacancies => NumSlots - NumOccupiedSlots;
         public bool TableFull => NumVacancies == 0;
@@ -48,6 +49,7 @@ namespace Blackjack
             Shoe = new Shoe(BlackjackConfig.Config.NumDecksInShoe);
             Shoe.CutIndex = Shoe.Count - BlackjackConfig.Config.CutIndex;
             Shoe.NumBurnOnShuffle = BlackjackConfig.Config.NumBurntOnShuffle;
+            Count = new(Shoe);
 
             slots = new BlackjackTableSlot[numSeats];
             for (int i = 0; i < numSeats; i++)

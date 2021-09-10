@@ -43,15 +43,12 @@ namespace TestBlackjack
         public void TestCount()
         {
             BlackjackCount count = new(shoe);
-
             CheckAllZero(count);
 
             shoe.Deal(10);
-
             CheckAnyNonZero(count);
 
             shoe.Shuffle();
-
             CheckAllZero(count);
         }
 
@@ -60,14 +57,26 @@ namespace TestBlackjack
         {
             BlackjackCount count = new(shoe);
 
-            CheckAllZero(count);
-
             shoe.Deal(10);
-
             CheckAnyNonZero(count);
 
             count.Reset();
+            CheckAllZero(count);
+        }
 
+        [TestMethod]
+        public void TestClearHandlers()
+        {
+            BlackjackCount count = new(shoe);
+
+            shoe.Deal(10);
+            CheckAnyNonZero(count);
+
+            count.Reset();
+            CheckAllZero(count);
+            count.ClearHandlers();
+
+            shoe.Deal(10);
             CheckAllZero(count);
         }
     }
