@@ -31,7 +31,9 @@ namespace Blackjack
             { BlackjackCountEnum.ZenCount, new List<float>() {1, 1, 2, 2, 2, 1, 0,  0, -2, -1 } }
         };
         private readonly Dictionary<BlackjackCountEnum, float> countMap = new();
-        private Shoe shoe;
+        private readonly Shoe shoe;
+
+        public event EventHandler<EventArgs> Changed;
 
         public BlackjackCount(Shoe shoe)
         {
@@ -60,6 +62,11 @@ namespace Blackjack
             shoe.Shuffling -= ShuffledHandler;
         }
 
+        public override string ToString()
+        {
+            return string.Join(", ", countMap.OrderBy(p => (int)p.Key).Select(p => $"{p.Key}={p.Value}"));
+        }
+
         private void DealtHandler(object _, DealtEventArgs args)
         {
             foreach (Card card in args.DealtCards)
@@ -70,11 +77,13 @@ namespace Blackjack
                     countMap[system] += deltaMap[system][value - 2];
                 }
             }
+            Changed?.Invoke(this, new EventArgs());
         }
 
         private void ShuffledHandler(object obj, EventArgs _)
         {
             Reset();
+            Changed?.Invoke(this, new EventArgs());
         }
     }
 }
