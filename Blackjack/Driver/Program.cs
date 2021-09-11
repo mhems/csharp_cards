@@ -22,19 +22,32 @@ namespace Driver
             table.AddLogger(eventLogger);
             FileLogger fileLogger = new("log.txt");
             eventLogger.Logging += fileLogger.OnEventMessage;
+            StdOutLogger printLogger = new();
+            eventLogger.Logging += printLogger.OnEventMessage;
+
+            human.BettingPolicy.Betting += eventLogger.OnBetMade;
+            human.DecisionPolicy.Decided += eventLogger.OnDecisionMade;
+            human.InsurancePolicy.Insured += eventLogger.OnInsuranceDecision;
+            human.Bank.Withdrawn += eventLogger.OnSpent;
+            human.Bank.Deposited += eventLogger.OnEarned;
+            table.TableBank.Withdrawn += eventLogger.OnSpent;
+            table.TableBank.Deposited += eventLogger.OnEarned;
+
+            table.SeatPlayer(human);
+            Console.WriteLine($"Welcome {human.Name}, good luck!");
 
             int numRounds = 0;
             while(true)
             {
                 table.PlayRound();
+                numRounds++;
 
-                Console.WriteLine($"{numRounds} rounds played, you have ${human.Bank}");
+                Console.WriteLine($"{numRounds} rounds played, you have ${human.Bank.Balance}");
                 Console.WriteLine("continue (y/n)? > ");
                 if (Console.ReadLine().ToLower().StartsWith("n"))
                 {
                     break;
                 }
-                numRounds++;
             }
         }
     }

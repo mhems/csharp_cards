@@ -145,13 +145,16 @@ namespace Blackjack
                 slot.ActingHand += logger.OnTableSlotActingHand;
                 slot.Acting += logger.OnTableSlotActing;
 
-                slot.Player.Decided += logger.OnPlayerDecisionMade;
-                slot.Player.Betting += logger.OnPlayerBetMade;
-                slot.Player.Surrendered += logger.OnEarlySurrenderDecision;
-                slot.Player.Insured += logger.OnInsuranceDecision;
+                if (slot.Occupied)
+                {
+                    slot.Player.Decided += logger.OnPlayerDecisionMade;
+                    slot.Player.Betting += logger.OnPlayerBetMade;
+                    slot.Player.Surrendered += logger.OnEarlySurrenderDecision;
+                    slot.Player.Insured += logger.OnInsuranceDecision;
 
-                slot.Player.Spent += logger.OnPlayerSpent;
-                slot.Player.Earned += logger.OnPlayerEarned;
+                    slot.Player.Spent += logger.OnPlayerSpent;
+                    slot.Player.Earned += logger.OnPlayerEarned;
+                }
             }
 
             DealerSlot.RoundBegun += logger.OnTableSlotRoundBegan;
@@ -247,7 +250,7 @@ namespace Blackjack
             {
                 slot.NotifyAction();
                 int i = 0;
-                while (i < slot.NumSplits)
+                while (i < slot.NumHands)
                 {
                     slot.Index = i;
                     DealHand(slot);
@@ -357,7 +360,7 @@ namespace Blackjack
 
     public class BlackjackTableSlot
     {
-        private readonly List<BlackjackHand> hands = new();
+        private readonly List<BlackjackHand> hands = new() { new() };
         private readonly List<Bank> pots = new() { new() };
 
         #region Properties
@@ -367,6 +370,7 @@ namespace Blackjack
         public bool Insured => InsurancePot.Balance > 0;
         public bool Surrendered { get; internal set; }
         public bool Settled { get; set; }
+        public int NumHands => hands.Count;
         public int NumSplits => hands.Count - 1;
         public bool Active => pots[0].Balance > 0;
         public bool Occupied => Player != null;
@@ -441,17 +445,21 @@ namespace Blackjack
 
         public void Settle(Bank house, int dealerValue)
         {
-            for (int i = 0; i < NumSplits; i++)
+            for (int i = 0; i < NumHands; i++)
             {
                 if (Surrendered)
                 {
                     pots[i].TransferFactor(house, Config.LateSurrenderCost);
                 }
+                else if (hands[i].IsBlackjack && dealerValue != 21)
+                {
+                    house.Transfer(pots[i], Config.BlackjackPayoutRatio * pots[i].Balance);
+                }
                 else if ((dealerValue > 21) || (hands[i].Value > dealerValue))
                 {
                     house.Transfer(pots[i], Config.PayoutRatio * pots[i].Balance);
                 }
-                else if (hands[i].Value < dealerValue)
+                else if (hands[i].Value < dealerValue || hands[i].IsBust)
                 {
                     pots[i].Transfer(house);
                 }

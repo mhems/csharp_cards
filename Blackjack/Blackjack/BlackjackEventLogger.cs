@@ -23,13 +23,22 @@ namespace Blackjack
         public FileLogger(string path)
         {
             this.path = path;
+            File.Delete(path);
         }
         public void OnEventMessage(object obj, EventMessageArgs args)
         {
-            using (StreamWriter writer = new(path))
+            using (StreamWriter writer = File.AppendText(path))
             {
                 writer.WriteLine(args.Message);
             }
+        }
+    }
+
+    public class StdOutLogger
+    {
+        public void OnEventMessage(object obj, EventMessageArgs args)
+        {
+            Console.WriteLine(args.Message);
         }
     }
 
@@ -37,27 +46,27 @@ namespace Blackjack
     {
         public event EventHandler<EventMessageArgs> Logging;
 
-        public void OnTableRoundBegan(object obj, EventArgs _) 
+        public void OnTableRoundBegan(object obj, EventArgs _)
         {
             if (obj is BlackjackTable t)
             {
-                Log($"began round on Table - {t.NumOccupiedSlots} seats occupied, ${t.TableBank} in bank");
+                Log($"began round on Table: {t.NumOccupiedSlots} seats occupied, ${t.TableBank.Balance} in bank");
             }
         }
         public void OnTableRoundEnded(object obj, EventArgs _) 
         {
             if (obj is BlackjackTable t)
             {
-                Log($"ended round on Table - {t.NumOccupiedSlots} seats occupied, ${t.TableBank} in bank");
+                Log($"ended round on Table: {t.NumOccupiedSlots} seats occupied, ${t.TableBank.Balance} in bank");
             }
         }
         public void OnTableHandDealt(object _, HandDealtEventArgs args) 
         {
-            Log($"player {args.Player} dealt hand {args.Hand}");
+            Log($"player {args.Player} dealt hand {args.Hand} (Total={args.Hand.Value})");
         }
         public void OnTableSeatChanged(object _, SeatingEventArgs args) 
         {
-            StringBuilder msg = new($"player {args.NewPlayer} took");
+            StringBuilder msg = new($"player {args.NewPlayer} took ");
             if (args.PreviousPlayer == null)
             {
                 msg.Append($"empty seat {args.SeatIndex}");
@@ -96,14 +105,20 @@ namespace Blackjack
                 Log($"acting on new Hand on TableSlot with player {s.Player}");
             }
         }
-        public void OnActionExecuted(object _, BlackjackActionEventArgs args) 
+        public void OnActionExecuted(object obj, BlackjackActionEventArgs args)
         {
-            string handString = args.Done ? "completed" : "continues";
-            Log($"executed action {args.Kind}; hand {handString}");
+            if (obj is BlackjackTableSlot slot)
+            {
+                string handString = args.Done ? "completed" : "continues";
+                Log($"executed action {args.Kind}; hand {handString} (Total={slot.Hand.Value})");
+            }
         }
-        public void OnHitExecuted(object _, BlackjackHitActionEventArgs args)
+        public void OnHitExecuted(object obj, BlackjackHitActionEventArgs args)
         {
-            Log($"hit yielded a {args.CardReceived}");
+            if (obj is BlackjackTableSlot slot)
+            {
+                Log($"hit yielded a {args.CardReceived}, Total={slot.Hand.Value}");
+            }
         }
         public void OnPlayerDecisionMade(object obj, BlackjackDecisionEventArgs args) 
         { 
@@ -163,6 +178,14 @@ namespace Blackjack
                 Log($"player {p} earned {args.Amount}");
             }
         }
+        public void OnSpent(object obj, BankTransactionEventArgs args)
+        {
+            Log($"spent ${args.Amount}, now have ${args.Balance}");
+        }
+        public void OnEarned(object obj, BankTransactionEventArgs args)
+        {
+            Log($"earned ${args.Amount}, now have ${args.Balance}");
+        }
         public void OnHouseEarned(object _, BankTransactionEventArgs args)
         {
             Log($"house (${args.Balance}) won {args.Amount}");
@@ -201,12 +224,12 @@ namespace Blackjack
         }
         private static string MakeDecisionString(BlackjackDecisionEventArgs args)
         {
-            return $"decided on {args.Decision} from [{string.Join(", ", args.AvailableActions)}] with hand {args.Hand} vs {args.UpCard.Rank}";
+            return $"decided on {args.Decision} from [{string.Join(", ", args.AvailableActions)}] with hand {args.Hand} (Total={args.Hand.Value}) vs {args.UpCard.Rank}";
         }
         private static string MakeEarlySurrenderDecisionString(BlackjackEarlySurrenderEventArgs args)
         {
             string decisionString = args.Surrendered ? "accepted" : "declined";
-            return $"{decisionString} early surrender with hand {args.Hand} vs {args.UpCard.Rank}";
+            return $"{decisionString} early surrender with hand {args.Hand} (Total={args.Hand.Value}) vs {args.UpCard.Rank}";
         }
         private static string MakeBetString(BlackjackBetEventArgs args)
         {
@@ -215,7 +238,7 @@ namespace Blackjack
         private static string MakeInsuranceDecisionString(BlackjackInsuranceEventArgs args)
         {
             string decisionString = args.Insured ? "accepted" : "declined";
-            return $"{decisionString} insurance with hand {args.Hand} vs {args.UpCard.Rank}";
+            return $"{decisionString} insurance with hand {args.Hand} (Total={args.Hand.Value}) vs {args.UpCard.Rank}";
         }
     }
 }

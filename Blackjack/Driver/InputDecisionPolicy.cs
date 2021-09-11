@@ -10,20 +10,19 @@ namespace Driver
 {
     public class InputDecisionPolicy : BlackjackDecisionPolicy
     {
-        private readonly IEnumerable<BlackjackActionEnum> choices = Enum.GetValues(typeof(BlackjackActionEnum)).OfType<BlackjackActionEnum>();
         protected override BlackjackActionEnum DecideInner(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions)
         {
             BlackjackActionEnum choice;
 
-            Console.WriteLine($"you have hand {hand} vs {upCard.Rank}");
+            Console.WriteLine($"you have hand {hand} (Value={hand.Value}) vs {upCard.Rank}");
             Console.WriteLine($"choose one of [{string.Join(", ", availableActions)}]");
-            string input = Console.ReadLine();
 
             while (true)
             {
+                string input = Console.ReadLine();
                 try
                 {
-                    choice = choices.Where(c => c.ToString().ToLower().StartsWith(input.ToLower())).Single();
+                    choice = availableActions.Where(c => c.ToString().ToLower().StartsWith(input.ToLower())).Single();
                     break;
                 }
                 catch (InvalidOperationException _)
