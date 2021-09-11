@@ -45,7 +45,7 @@ namespace Blackjack
 
     public class BlackjackDealer : BlackjackPlayer
     {
-        public BlackjackDealer(IBlackjackConfig config) : base("Dealer", new HouseBank())
+        public BlackjackDealer(IBlackjackConfig config) : base("Dealer", new Bank())
         { 
             DecisionPolicy = new DealerDecisionPolicy(config); 
         }

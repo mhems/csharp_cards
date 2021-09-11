@@ -21,6 +21,17 @@ namespace Blackjack
         public IllegalBetException(int amount, Exception inner) : base(String.Format(Msg, amount), inner) {  }
     }
 
+    public class HandDealtEventArgs : EventArgs
+    {
+        public BlackjackHand Hand { get; }
+        public BlackjackPlayer Player { get; }
+        public HandDealtEventArgs(BlackjackHand hand, BlackjackPlayer player)
+        {
+            Hand = hand;
+            Player = player;
+        }
+    }
+
     public class BlackjackTable
     {
         private readonly BlackjackTableSlot[] slots;
@@ -28,9 +39,10 @@ namespace Blackjack
 
         #region Properties
         public IBlackjackConfig Config { get; set; }
+        public BlackjackTableSlot DealerSlot { get; set; }
         public Bank TableBank { get; } = new HouseBank();
-        public BlackjackDealer Dealer { get; set; }
-        public BlackjackHand DealerHand { get; internal set; }
+        public BlackjackDealer Dealer => (BlackjackDealer)DealerSlot.Player;
+        public BlackjackHand DealerHand => DealerSlot.Hand;
         public Shoe Shoe { get; private set; }
         public BlackjackCount Count { get; private set; }
         public Card UpCard => DealerHand[1];
@@ -42,8 +54,12 @@ namespace Blackjack
         public BlackjackTableSlot[] ActiveSlots => slots.Where(s => s.Active).ToArray();
         #endregion
 
+        #region Events
         public event EventHandler<EventArgs> RoundBegun;
         public event EventHandler<EventArgs> RoundEnded;
+        public event EventHandler<HandDealtEventArgs> HandDealt;
+        public event EventHandler<SeatingEventArgs> SeatChanged;
+        #endregion
 
         public BlackjackTable(int numSeats, IBlackjackConfig config)
         {
@@ -59,8 +75,8 @@ namespace Blackjack
                 slots[i] = new BlackjackTableSlot(Config);
             }
 
-            Dealer = new(Config);
-            DealerHand = new();
+            DealerSlot = new(Config);
+            DealerSlot.Player = new BlackjackDealer(Config);
 
             HitAction hit = new(Shoe);
             StandAction stand = new();
@@ -87,7 +103,9 @@ namespace Blackjack
             {
                 if (!slots[i % NumSlots].Occupied)
                 {
+                    BlackjackPlayer previousPlayer = slots[i % NumSlots].Player;
                     slots[i % NumSlots].Player = player;
+                    SeatChanged?.Invoke(this, new SeatingEventArgs(previousPlayer, player, i));
                     return true;
                 }
             }
@@ -98,6 +116,7 @@ namespace Blackjack
         public void PlayRound()
         {
             BeginRound();
+            Bet();
             Deal();
             OfferEarlySurrender();
             if (UpCard.IsAce)
@@ -177,6 +196,7 @@ namespace Blackjack
         {
             foreach (BlackjackTableSlot slot in slots)
             {
+                slot.NotifyAction();
                 int i = 0;
                 while (i < slot.NumSplits)
                 {
@@ -191,28 +211,21 @@ namespace Blackjack
         {
             while (true)
             {
-                if (DealerHand.IsBlackjack)
-                {
-                    break;
-                }
-                else if (DealerHand.IsBust)
+                if (DealerHand.IsBlackjack || DealerHand.IsBust)
                 {
                     break;
                 }
                 BlackjackActionEnum action = Dealer.DecisionPolicy.Decide(DealerHand, UpCard, null);
-                if (action == BlackjackActionEnum.Stand)
+                if (actionMap[action].Act(DealerSlot))
                 {
                     break;
-                }
-                else
-                {
-                    DealerHand.Add(Shoe.Deal(1)[0]);
                 }
             }
         }
 
         private void DealHand(BlackjackTableSlot slot)
         {
+            slot.NotifyHand();
             while (true)
             {
                 if (slot.Hand.IsBlackjack && !DealerHand.IsBlackjack)
@@ -251,6 +264,15 @@ namespace Blackjack
             {
                 slot.BeginRound();
             }
+            DealerSlot.BeginRound();
+        }
+
+        private void Bet()
+        {
+            foreach(BlackjackTableSlot slot in slots.Where(s => s.Occupied))
+            {
+                slot.Bet();
+            }
         }
 
         private void Deal()
@@ -263,6 +285,12 @@ namespace Blackjack
                 }
                 DealerHand.Add(Shoe.Deal(1)[0]);
             }
+
+            foreach (BlackjackTableSlot slot in ActiveSlots)
+            {
+                HandDealt?.Invoke(this, new HandDealtEventArgs(slot.Hand, slot.Player));
+            }
+            HandDealt?.Invoke(this, new HandDealtEventArgs(DealerHand, Dealer));
         }
 
         private void EndRound()
@@ -271,29 +299,19 @@ namespace Blackjack
             {
                 slot.EndRound();
             }
-            DealerHand.Clear();
+            DealerSlot.EndRound();
             RoundEnded?.Invoke(this, new EventArgs());
         }
     }
 
     public class BlackjackTableSlot
     {
-        private static readonly HashSet<BlackjackActionEnum> SurrenderSet = new() { BlackjackActionEnum.LateSurrender };
         private readonly List<BlackjackHand> hands = new();
         private readonly List<Bank> pots = new() { new() };
-        private BlackjackPlayer player = null;
 
         #region Properties
         public IBlackjackConfig Config { get; set; }
-        public BlackjackPlayer Player
-        {
-            get => player;
-            set
-            {
-                Seating?.Invoke(this, new SeatingEventArgs(player, value));
-                player = value;
-            }
-        }
+        public BlackjackPlayer Player { get; set; }
         internal int Index { get; set; }
         public bool Insured => InsurancePot.Balance > 0;
         public bool Surrendered { get; internal set; }
@@ -307,9 +325,10 @@ namespace Blackjack
         #endregion
 
         #region Events
-        public EventHandler<EventArgs> Seating;
         public event EventHandler<EventArgs> RoundBegun;
         public event EventHandler<EventArgs> RoundEnded;
+        public event EventHandler<EventArgs> Acting;
+        public event EventHandler<EventArgs> ActingHand;
         #endregion
 
         public BlackjackTableSlot(IBlackjackConfig config)
@@ -320,27 +339,41 @@ namespace Blackjack
         public void BeginRound()
         {
             RoundBegun?.Invoke(this, new EventArgs());
-            int amount = player.BettingPolicy.Bet();
+        }
+
+        public void Bet()
+        {
+            int amount = Player.BettingPolicy.Bet();
             if (amount < Config.MinimumBet || amount > Config.MaximumBet)
             {
                 throw new IllegalBetException(amount);
             }
-            player.Bank.Transfer(Pot, amount);
+            Player.Bank.Transfer(Pot, amount);
         }
 
         public bool OfferEarlySurrender(Card upCard)
         {
-            return player.EarlySurrenderPolicy.Surrender(Hand, upCard);
+            return Player.EarlySurrenderPolicy.Surrender(Hand, upCard);
         }
 
         public bool OfferInsurance(Card upCard)
         {
-            bool insured = player.InsurancePolicy.Insure(Hand, upCard);
+            bool insured = Player.InsurancePolicy.Insure(Hand, upCard);
             if (insured)
             {
-                player.Bank.Transfer(InsurancePot, Config.InsuranceCost * Pot.Balance);
+                Player.Bank.Transfer(InsurancePot, Config.InsuranceCost * Pot.Balance);
             }
             return insured;
+        }
+
+        public void NotifyAction()
+        {
+            Acting?.Invoke(this, new EventArgs());
+        }
+
+        public void NotifyHand()
+        {
+            ActingHand?.Invoke(this, new EventArgs());
         }
 
         public void Split()
@@ -352,7 +385,7 @@ namespace Blackjack
             hands.Add(newHand);
 
             pots.Add(new Bank());
-            player.Bank.Transfer(pots[1], pots[0].Balance * Config.SplitCost);
+            Player.Bank.Transfer(pots[1], pots[0].Balance * Config.SplitCost);
         }
 
         public void Settle(Bank house, int dealerValue)
@@ -381,9 +414,9 @@ namespace Blackjack
 
             foreach (Bank pot in pots)
             {
-                pot.Transfer(player.Bank);
+                pot.Transfer(Player.Bank);
             }
-            InsurancePot.Transfer(player.Bank);
+            InsurancePot.Transfer(Player.Bank);
 
             pots.RemoveRange(1, pots.Count - 1);
             pots[0] = new();
@@ -402,11 +435,13 @@ namespace Blackjack
     {
         public BlackjackPlayer PreviousPlayer { get; private set; }
         public BlackjackPlayer NewPlayer { get; private set; }
+        public int SeatIndex { get; }
 
-        public SeatingEventArgs(BlackjackPlayer prevPlayer, BlackjackPlayer newPlayer)
+        public SeatingEventArgs(BlackjackPlayer prevPlayer, BlackjackPlayer newPlayer, int seatIndex)
         {
             PreviousPlayer = prevPlayer;
             NewPlayer = newPlayer;
+            SeatIndex = seatIndex;
         }
     }
 }
