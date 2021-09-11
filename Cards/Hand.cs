@@ -25,7 +25,7 @@ namespace Cards
 
         public override string ToString()
         {
-            return string.Join(", ", this);
+            return $"[{string.Join(", ", this)}]";
         }
     }
 }
