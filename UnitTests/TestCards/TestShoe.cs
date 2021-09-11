@@ -54,7 +54,7 @@ namespace TestCards
             Assert.AreEqual(0, shoe.Index);
         }
 
-        private void DealtHandler(object obj, Shoe.DealtEventArgs args)
+        private void DealtHandler(object obj, DealtEventArgs args)
         {
             gotDealtEvent = true;
             dealtCards = args.DealtCards;
@@ -138,7 +138,7 @@ namespace TestCards
             Assert.IsTrue(gotShuffleEvent);
         }
 
-        private void BurnHandler(object obj, Shoe.BurnEventArgs args)
+        private void BurnHandler(object obj, BurnEventArgs args)
         {
             gotBurnEvent = true;
             numBurnt = args.NumBurnt;

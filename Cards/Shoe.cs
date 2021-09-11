@@ -96,23 +96,23 @@ namespace Cards
             Index = 0;
             Burn(NumBurnOnShuffle);
         }
+    }
 
-        public class DealtEventArgs : EventArgs
+    public class DealtEventArgs : EventArgs
+    {
+        public Card[] DealtCards { get; private set; }
+        public DealtEventArgs(Card[] cards)
         {
-            public Card[] DealtCards { get; private set; }
-            public DealtEventArgs(Card[] cards)
-            {
-                DealtCards = cards;
-            }
+            DealtCards = cards;
         }
+    }
 
-        public class BurnEventArgs : EventArgs
+    public class BurnEventArgs : EventArgs
+    {
+        public int NumBurnt { get; private set; }
+        public BurnEventArgs(int n)
         {
-            public int NumBurnt { get; private set; }
-            public BurnEventArgs(int n)
-            {
-                NumBurnt = n;
-            }
+            NumBurnt = n;
         }
     }
 }

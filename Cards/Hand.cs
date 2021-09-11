@@ -22,5 +22,10 @@ namespace Cards
             RemoveAt(Count - 1);
             return c;
         }
+
+        public override string ToString()
+        {
+            return string.Join(", ", this);
+        }
     }
 }

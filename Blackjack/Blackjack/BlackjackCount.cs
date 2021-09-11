@@ -60,7 +60,7 @@ namespace Blackjack
             shoe.Shuffling -= ShuffledHandler;
         }
 
-        private void DealtHandler(object _, Shoe.DealtEventArgs args)
+        private void DealtHandler(object _, DealtEventArgs args)
         {
             foreach (Card card in args.DealtCards)
             {

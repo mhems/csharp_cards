@@ -34,6 +34,8 @@ namespace Blackjack
 
     public class BlackjackTable
     {
+        private static readonly HashSet<BlackjackActionEnum> dealerOptions = new()
+        { BlackjackActionEnum.Hit, BlackjackActionEnum.Stand };
         private readonly BlackjackTableSlot[] slots;
         private readonly Dictionary<BlackjackActionEnum, BlackjackAction> actionMap = new();
 
@@ -209,13 +211,15 @@ namespace Blackjack
 
         private void DealDealer()
         {
+            DealerSlot.NotifyAction();
+            DealerSlot.NotifyHand();
             while (true)
             {
                 if (DealerHand.IsBlackjack || DealerHand.IsBust)
                 {
                     break;
                 }
-                BlackjackActionEnum action = Dealer.DecisionPolicy.Decide(DealerHand, UpCard, null);
+                BlackjackActionEnum action = Dealer.DecisionPolicy.Decide(DealerHand, UpCard, dealerOptions);
                 if (actionMap[action].Act(DealerSlot))
                 {
                     break;
