@@ -115,6 +115,53 @@ namespace Blackjack
             return false;
         }
 
+        public void AddLogger(BlackjackEventLogger logger)
+        {
+            RoundBegun += logger.OnTableRoundBegan;
+            RoundEnded += logger.OnTableRoundEnded;
+            HandDealt += logger.OnTableHandDealt;
+            SeatChanged += logger.OnTableSeatChanged;
+
+            foreach (BlackjackAction action in actionMap.Values)
+            {
+                action.Acted += logger.OnActionExecuted;
+            }
+            ((HitAction)actionMap[BlackjackActionEnum.Hit]).Hit += logger.OnHitExecuted;
+
+            Count.Changed += logger.OnCountChanged;
+
+            Shoe.Shuffling += logger.OnShoeShuffling;
+            Shoe.Dealt += logger.OnShoeDealt;
+            Shoe.Burnt += logger.OnShoeBurnt;
+            Shoe.Exhausted += logger.OnShoeExhausted;
+
+            TableBank.Deposited += logger.OnHouseEarned;
+            TableBank.Withdrawn += logger.OnHouseSpent;
+
+            foreach (BlackjackTableSlot slot in slots)
+            {
+                slot.RoundBegun += logger.OnTableSlotRoundBegan;
+                slot.RoundEnded += logger.OnTableSlotRoundEnded;
+                slot.ActingHand += logger.OnTableSlotActingHand;
+                slot.Acting += logger.OnTableSlotActing;
+
+                slot.Player.Decided += logger.OnPlayerDecisionMade;
+                slot.Player.Betting += logger.OnPlayerBetMade;
+                slot.Player.Surrendered += logger.OnEarlySurrenderDecision;
+                slot.Player.Insured += logger.OnInsuranceDecision;
+
+                slot.Player.Spent += logger.OnPlayerSpent;
+                slot.Player.Earned += logger.OnPlayerEarned;
+            }
+
+            DealerSlot.RoundBegun += logger.OnTableSlotRoundBegan;
+            DealerSlot.RoundEnded += logger.OnTableSlotRoundEnded;
+            DealerSlot.ActingHand += logger.OnTableSlotActingHand;
+            DealerSlot.Acting += logger.OnTableSlotActing;
+
+            DealerSlot.Player.Decided += logger.OnPlayerDecisionMade;
+        }
+
         public void PlayRound()
         {
             BeginRound();

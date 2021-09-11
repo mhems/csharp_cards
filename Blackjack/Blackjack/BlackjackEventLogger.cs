@@ -163,6 +163,14 @@ namespace Blackjack
                 Log($"player {p} earned {args.Amount}");
             }
         }
+        public void OnHouseEarned(object _, BankTransactionEventArgs args)
+        {
+            Log($"house (${args.Balance}) won {args.Amount}");
+        }
+        public void OnHouseSpent(object obj, BankTransactionEventArgs args)
+        {
+            Log($"house (${args.Balance}) lost {args.Amount}");
+        }
         public void OnShoeShuffling(object obj, EventArgs _)
         {
             Log("shoe shuffled");

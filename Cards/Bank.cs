@@ -15,8 +15,8 @@ namespace Cards
 
     public class Bank
     {
-        public EventHandler<BankTransactionEventArgs> Withdrawn;
-        public EventHandler<BankTransactionEventArgs> Deposited;
+        public event EventHandler<BankTransactionEventArgs> Withdrawn;
+        public event EventHandler<BankTransactionEventArgs> Deposited;
 
         public int Balance { get; protected set; } = 0;
         public Func<double, int> Round { get; set; } = d => (int)Math.Floor(d);
@@ -70,8 +70,13 @@ namespace Cards
                 throw new InsufficientFundsException($"Cannot withdraw ${amount} from ${Balance}");
             }
             Balance -= amount;
-            Withdrawn?.Invoke(this, new BankTransactionEventArgs(amount, Balance));
+            OnWithdrawal(new BankTransactionEventArgs(amount, Balance));
             return amount;
+        }
+
+        protected virtual void OnWithdrawal(BankTransactionEventArgs args)
+        {
+            Withdrawn?.Invoke(this, args);
         }
 
         public virtual void Deposit(double amount)
@@ -86,7 +91,12 @@ namespace Cards
                 throw new ArgumentException("Cannot deposit a negative amount");
             }
             Balance += amount;
-            Deposited?.Invoke(this, new BankTransactionEventArgs(amount, Balance));
+            OnDeposit(new BankTransactionEventArgs(amount, Balance));
+        }
+
+        protected virtual void OnDeposit(BankTransactionEventArgs args)
+        {
+            Deposited?.Invoke(this, args);
         }
     }
 
@@ -101,7 +111,7 @@ namespace Cards
                 throw new ArgumentException("Cannot withdraw a negative amount");
             }
             Balance -= amount;
-            Withdrawn?.Invoke(this, new BankTransactionEventArgs(-amount, Balance));
+            OnWithdrawal(new BankTransactionEventArgs(-amount, Balance));
             return amount;
         }
     }
