@@ -366,7 +366,7 @@ namespace Blackjack
         #region Properties
         public IBlackjackConfig Config { get; set; }
         public BlackjackPlayer Player { get; set; }
-        internal int Index { get; set; }
+        public int Index { get; set; }
         public bool Insured => InsurancePot.Balance > 0;
         public bool Surrendered { get; internal set; }
         public bool Settled { get; set; }
@@ -437,10 +437,11 @@ namespace Blackjack
             newHand.Add(Hand[1]);
             Hand.RemoveAt(1);
             Hand.IsSplit = true;
-            hands.Add(newHand);
 
-            pots.Add(new Bank());
-            Player.Bank.Transfer(pots[1], pots[0].Balance * Config.SplitCost);
+            hands.Insert(Index + 1, newHand);
+
+            pots.Insert(Index + 1, new Bank());
+            Player.Bank.Transfer(pots[Index + 1], pots[Index].Balance * Config.SplitCost);
         }
 
         public void Settle(Bank house, int dealerValue)

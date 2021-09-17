@@ -9,7 +9,7 @@ namespace Cards
     public class Shoe
     {
         private readonly Random rng = new ();
-        private readonly List<Card> cards = new ();
+        protected readonly List<Card> cards = new ();
 
         public int NumDecks { get; private set; }
         public int CutIndex { get; set; }
