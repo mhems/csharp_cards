@@ -15,7 +15,7 @@ namespace Blackjack
             private readonly Dictionary<int, List<BlackjackActionEnum>> chart = new();
             public BlackjackActionEnum this[int total, Card card]
             {
-                get => chart[total][BlackjackHand.CardValue(card)];
+                get => chart[total][BlackjackHand.CardValue(card) - 2];
             }
 
             public static StrategyChart FromFile(string file)
