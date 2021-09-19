@@ -42,6 +42,17 @@ namespace Blackjack
         }
     }
 
+    public class BlackjackStatsLogger : BlackjackEventLogger
+    {
+        public void OnTableRoundEnd(object obj, EventArgs _)
+        {
+            if (obj is BlackjackTable table)
+            {
+                Log($"{table.Count[BlackjackCountEnum.HiLo]},{table.TableBank.Balance}");
+            }
+        }
+    }
+
     public class BlackjackEventLogger
     {
         public event EventHandler<EventMessageArgs> Logging;
@@ -218,7 +229,7 @@ namespace Blackjack
             }
         }
 
-        private void Log(string message)
+        protected void Log(string message)
         {
             Logging?.Invoke(this, new EventMessageArgs(message));
         }

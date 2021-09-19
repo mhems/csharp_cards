@@ -35,8 +35,12 @@ namespace Driver
 
             BlackjackEventLogger eventLogger = new();
             table.AddLogger(eventLogger);
+            BlackjackStatsLogger statsLogger = new();
+            table.RoundEnded += statsLogger.OnTableRoundEnd;
             FileLogger fileLogger = new("log.txt");
             eventLogger.Logging += fileLogger.OnEventMessage;
+            FileLogger csvLogger = new("log.csv");
+            statsLogger.Logging += csvLogger.OnEventMessage;
             StdOutLogger printLogger = new();
             eventLogger.Logging += printLogger.OnEventMessage;
 
