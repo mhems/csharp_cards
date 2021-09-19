@@ -69,8 +69,11 @@ namespace Cards
             {
                 throw new InsufficientFundsException($"Cannot withdraw ${amount} from ${Balance}");
             }
-            Balance -= amount;
-            OnWithdrawal(new BankTransactionEventArgs(amount, Balance));
+            if (amount > 0)
+            {
+                Balance -= amount;
+                OnWithdrawal(new BankTransactionEventArgs(amount, Balance));
+            }
             return amount;
         }
 
@@ -90,8 +93,11 @@ namespace Cards
             {
                 throw new ArgumentException("Cannot deposit a negative amount");
             }
-            Balance += amount;
-            OnDeposit(new BankTransactionEventArgs(amount, Balance));
+            if (amount > 0)
+            {
+                Balance += amount;
+                OnDeposit(new BankTransactionEventArgs(amount, Balance));
+            }
         }
 
         protected virtual void OnDeposit(BankTransactionEventArgs args)
@@ -110,8 +116,11 @@ namespace Cards
             {
                 throw new ArgumentException("Cannot withdraw a negative amount");
             }
-            Balance -= amount;
-            OnWithdrawal(new BankTransactionEventArgs(-amount, Balance));
+            if (amount > 0)
+            {
+                Balance -= amount;
+                OnWithdrawal(new BankTransactionEventArgs(-amount, Balance));
+            }
             return amount;
         }
     }

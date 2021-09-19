@@ -14,7 +14,7 @@ namespace Driver
             human.Bank.Deposit(1000);
 
             BlackjackPlayer bot = new("bot");
-            bot.Bank.Deposit(1000);
+            bot.Bank.Deposit(1000000);
 
             IBlackjackConfig config = new StandardBlackjackConfig();
 
@@ -27,32 +27,18 @@ namespace Driver
             bot.InsurancePolicy = new DeclineInsurancePolicy();
 
             BlackjackTable table = new(1, config);
+
+            //player = human;
+            player = bot;
+
+            table.SeatPlayer(player);
+
             BlackjackEventLogger eventLogger = new();
             table.AddLogger(eventLogger);
             FileLogger fileLogger = new("log.txt");
             eventLogger.Logging += fileLogger.OnEventMessage;
             StdOutLogger printLogger = new();
             eventLogger.Logging += printLogger.OnEventMessage;
-
-            human.BettingPolicy.Betting += eventLogger.OnBetMade;
-            human.DecisionPolicy.Decided += eventLogger.OnDecisionMade;
-            human.InsurancePolicy.Insured += eventLogger.OnInsuranceDecision;
-            human.Bank.Withdrawn += eventLogger.OnSpent;
-            human.Bank.Deposited += eventLogger.OnEarned;
-
-            bot.BettingPolicy.Betting += eventLogger.OnBetMade;
-            bot.DecisionPolicy.Decided += eventLogger.OnDecisionMade;
-            bot.InsurancePolicy.Insured += eventLogger.OnInsuranceDecision;
-            bot.Bank.Withdrawn += eventLogger.OnSpent;
-            bot.Bank.Deposited += eventLogger.OnEarned;
-
-            table.TableBank.Withdrawn += eventLogger.OnSpent;
-            table.TableBank.Deposited += eventLogger.OnEarned;
-
-            //player = human;
-            player = bot;
-
-            table.SeatPlayer(player);
 
             int numRounds = 0;
             while(true)

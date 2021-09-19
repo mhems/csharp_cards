@@ -14,30 +14,6 @@ namespace Blackjack
         public BlackjackBettingPolicy BettingPolicy { get; set; }
         public BlackjackInsurancePolicy InsurancePolicy { get; set; }
 
-        public event EventHandler<BlackjackDecisionEventArgs> Decided
-        {
-            add { DecisionPolicy.Decided += value; }
-            remove { DecisionPolicy.Decided -= value; }
-        }
-
-        public event EventHandler<BlackjackEarlySurrenderEventArgs> Surrendered
-        {
-            add { EarlySurrenderPolicy.Surrendered += value; }
-            remove { EarlySurrenderPolicy.Surrendered -= value; }
-        }
-
-        public event EventHandler<BlackjackBetEventArgs> Betting
-        {
-            add { BettingPolicy.Betting += value; }
-            remove { BettingPolicy.Betting -= value; }
-        }
-
-        public event EventHandler<BlackjackInsuranceEventArgs> Insured
-        {
-            add { InsurancePolicy.Insured += value; }
-            remove { InsurancePolicy.Insured -= value; }
-        }
-
         public BlackjackPlayer(string name) : base(name) { }
 
         protected BlackjackPlayer(string name, Bank bank) : base(name, bank) { }

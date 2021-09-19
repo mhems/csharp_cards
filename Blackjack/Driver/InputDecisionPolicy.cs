@@ -25,7 +25,7 @@ namespace Driver
                     choice = availableActions.Where(c => c.ToString().ToLower().StartsWith(input.ToLower())).Single();
                     break;
                 }
-                catch (InvalidOperationException _)
+                catch (InvalidOperationException)
                 {
                     Console.WriteLine($"unable to determine what you meant by '{input}', please enter full command");
                 }

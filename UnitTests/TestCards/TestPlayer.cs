@@ -59,8 +59,8 @@ namespace TestCards
         public void TestPlayerBank()
         {
             Player p1 = new("Alice");
-            p1.Spent += SpentHandler;
-            p1.Earned += EarnedHandler;
+            p1.Bank.Withdrawn += SpentHandler;
+            p1.Bank.Deposited += EarnedHandler;
 
             p1.Payout(100);
             Assert.AreEqual(100, p1.Bank.Balance);

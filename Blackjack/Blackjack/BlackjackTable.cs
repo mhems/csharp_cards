@@ -140,29 +140,52 @@ namespace Blackjack
 
             foreach (BlackjackTableSlot slot in slots)
             {
-                slot.RoundBegun += logger.OnTableSlotRoundBegan;
-                slot.RoundEnded += logger.OnTableSlotRoundEnded;
-                slot.ActingHand += logger.OnTableSlotActingHand;
-                slot.Acting += logger.OnTableSlotActing;
-
-                if (slot.Occupied)
+                if (slot != null)
                 {
-                    slot.Player.Decided += logger.OnPlayerDecisionMade;
-                    slot.Player.Betting += logger.OnPlayerBetMade;
-                    slot.Player.Surrendered += logger.OnEarlySurrenderDecision;
-                    slot.Player.Insured += logger.OnInsuranceDecision;
+                    slot.RoundBegun += logger.OnTableSlotRoundBegan;
+                    slot.RoundEnded += logger.OnTableSlotRoundEnded;
+                    slot.ActingHand += logger.OnTableSlotActingHand;
+                    slot.Acting += logger.OnTableSlotActing;
 
-                    slot.Player.Spent += logger.OnPlayerSpent;
-                    slot.Player.Earned += logger.OnPlayerEarned;
+                    if (slot.Occupied)
+                    {
+                        if (slot.Player.DecisionPolicy != null)
+                        {
+                            slot.Player.DecisionPolicy.Decided += logger.OnDecisionMade;
+                        }
+                        if (slot.Player.BettingPolicy != null)
+                        {
+                            slot.Player.BettingPolicy.Betting += logger.OnBetMade;
+                        }
+                        if (slot.Player.EarlySurrenderPolicy != null)
+                        {
+                            slot.Player.EarlySurrenderPolicy.Surrendered += logger.OnEarlySurrenderDecision;
+                        }
+                        if (slot.Player.InsurancePolicy != null)
+                        {
+                            slot.Player.InsurancePolicy.Insured += logger.OnInsuranceDecision;
+                        }
+                        if (slot.Player.Bank != null)
+                        {
+                            slot.Player.Bank.Withdrawn += logger.OnSpent;
+                            slot.Player.Bank.Deposited += logger.OnEarned;
+                        }
+                    }
                 }
             }
 
-            DealerSlot.RoundBegun += logger.OnTableSlotRoundBegan;
-            DealerSlot.RoundEnded += logger.OnTableSlotRoundEnded;
-            DealerSlot.ActingHand += logger.OnTableSlotActingHand;
-            DealerSlot.Acting += logger.OnTableSlotActing;
+            if (DealerSlot != null)
+            {
+                DealerSlot.RoundBegun += logger.OnTableSlotRoundBegan;
+                DealerSlot.RoundEnded += logger.OnTableSlotRoundEnded;
+                DealerSlot.ActingHand += logger.OnTableSlotActingHand;
+                DealerSlot.Acting += logger.OnTableSlotActing;
 
-            DealerSlot.Player.Decided += logger.OnPlayerDecisionMade;
+                if (DealerSlot.Occupied && DealerSlot.Player.DecisionPolicy != null)
+                {
+                    DealerSlot.Player.DecisionPolicy.Decided += logger.OnDecisionMade;
+                }
+            }
         }
 
         public void PlayRound()
@@ -282,10 +305,8 @@ namespace Blackjack
             slot.NotifyHand();
             while (true)
             {
-                if (slot.Hand.IsBlackjack && !DealerHand.IsBlackjack)
+                if (slot.Hand.IsBlackjack)
                 {
-                    TableBank.Transfer(slot.Pot, Config.BlackjackPayoutRatio * slot.Pot.Balance);
-                    slot.Settled = true;
                     break;
                 }
                 else if (slot.Hand.IsBust)
