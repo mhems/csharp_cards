@@ -12,38 +12,91 @@ namespace TestBlackjack
     [TestClass]
     public class TestBlackjackActions
     {
-        private IBlackjackConfig cfg;
-        private HitAction hit;
-        private StandAction stand; 
-
-        [TestInitialize]
-        public void Setup()
-        {
-            cfg = new StandardBlackjackConfig();
-            Shoe shoe = new(1);
-            hit = new(shoe);
-            stand = new();
-        }
-
         [TestMethod]
         public void TestHit()
         {
+            Card six = CardFactory.GetCard(Card.RankEnum.Six, Card.SuitEnum.Clubs);
+            Card seven = CardFactory.GetCard(Card.RankEnum.Seven, Card.SuitEnum.Hearts);
+            TestShoe shoe = TestUtilities.MakeTestShoe(new List<Card> { seven });
+            HitAction hit = new(shoe);
+
             Assert.AreEqual(BlackjackActionEnum.Hit.ToString(), hit.ToString());
-            Assert.IsTrue(hit.Available(null));
+
+            BlackjackTableSlot slot = TestUtilities.MakeTestSlot();
+            IBlackjackConfig config = slot.Config;
+            int startingBalance = slot.Player.Bank.Balance;
+
+            slot.Hand.Add(six);
+            slot.Hand.Add(six);
+
+            Assert.IsTrue(hit.Available(slot));
+
+            bool done = hit.Act(slot);
+            Assert.IsFalse(done);
+            Assert.AreEqual(3, slot.Hand.Count);
+            Assert.AreEqual(seven, slot.Hand[2]);
+            Assert.AreEqual(1, slot.NumHands);
+            Assert.AreEqual(0, slot.NumSplits);
+
+            Assert.IsTrue(hit.Available(slot));
+            Assert.AreEqual(startingBalance, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
         }
 
         [TestMethod]
         public void TestStand()
         {
+            StandAction stand = new();
             Assert.AreEqual(BlackjackActionEnum.Stand.ToString(), stand.ToString());
-            Assert.IsTrue(stand.Available(null));
+            BlackjackTableSlot slot = TestUtilities.MakeTestSlot();
+            IBlackjackConfig config = slot.Config;
+            int startingBalance = slot.Player.Bank.Balance;
+
+            Assert.IsTrue(stand.Available(slot));
+
+            bool done = stand.Act(slot);
+            Assert.IsTrue(done);
+            Assert.AreEqual(0, slot.Hand.Count);
+            Assert.AreEqual(1, slot.NumHands);
+            Assert.AreEqual(0, slot.NumSplits);
+
+            Assert.IsTrue(stand.Available(slot));
+            Assert.AreEqual(startingBalance, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
         }
 
         [TestMethod]
         public void TestDouble()
         {
-            DoubleAction double_ = new(cfg, hit, stand);
+            Card five = CardFactory.GetCard(Card.RankEnum.Five, Card.SuitEnum.Clubs);
+            Card ten = CardFactory.GetCard(Card.RankEnum.Ten, Card.SuitEnum.Diamonds);
+            TestShoe shoe = new(new List<Card>() { ten });
+
+            BlackjackTableSlot slot = TestUtilities.MakeTestSlot();
+            IBlackjackConfig config = slot.Config;
+            int startingBalance = slot.Player.Bank.Balance;
+
+            slot.Hand.Add(five);
+            slot.Hand.Add(five);
+
+            HitAction hit = new(shoe);
+            StandAction stand = new();
+            DoubleAction double_ = new(config, hit, stand);
             Assert.AreEqual(BlackjackActionEnum.Double.ToString(), double_.ToString());
+
+            Assert.IsTrue(double_.Available(slot));
+
+            bool done = double_.Act(slot);
+
+            Assert.IsTrue(done);
+            Assert.AreEqual(3, slot.Hand.Count);
+            Assert.AreEqual(1, slot.NumHands);
+            Assert.AreEqual(0, slot.NumSplits);
+            Assert.AreEqual(ten, slot.Hand[2]);
+
+            Assert.IsFalse(double_.Available(slot));
+            Assert.AreEqual(startingBalance - config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(2 * config.MinimumBet, slot.Pot.Balance);
         }
 
         [TestMethod]
@@ -63,15 +116,14 @@ namespace TestBlackjack
                 CardFactory.GetCard(Card.RankEnum.Seven, Card.SuitEnum.Diamonds),
                 CardFactory.GetCard(Card.RankEnum.Three, Card.SuitEnum.Spades)
             });
-            hit = new(shoe);
-            SplitAction split = new(cfg, hit);
+
+            BlackjackTableSlot slot = TestUtilities.MakeTestSlot();
+            IBlackjackConfig config = slot.Config;
+            HitAction hit = new(shoe);
+            SplitAction split = new(slot.Config, hit);
             Assert.AreEqual(BlackjackActionEnum.Split.ToString(), split.ToString());
 
-            IBlackjackConfig config = new StandardBlackjackConfig();
-            BlackjackTableSlot slot = new(config);
-            slot.Player = TestUtilities.MakeTestPlayer();
             int startingBalance = slot.Player.Bank.Balance;
-            slot.Player.Bank.Transfer(slot.Pot, config.MinimumBet);
             slot.Hand.Add(fourOfSpades);
             slot.Hand.Add(fourOfClubs);
 
@@ -88,12 +140,16 @@ namespace TestBlackjack
             Assert.AreEqual(2, slot.Hand.Count);
             Assert.AreEqual(fourOfSpades, slot.Hand[0]);
             Assert.AreEqual(fourOfDiamonds, slot.Hand[1]);
+            Assert.AreEqual(startingBalance - config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
 
             slot.Index = 1;
             Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
             Assert.AreEqual(2, slot.Hand.Count);
             Assert.AreEqual(fourOfClubs, slot.Hand[0]);
             Assert.AreEqual(fourOfHearts, slot.Hand[1]);
+            Assert.AreEqual(startingBalance - config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
 
             // ---
 
@@ -113,12 +169,16 @@ namespace TestBlackjack
             Assert.AreEqual(fourOfSpades, slot.Hand[0]);
             Assert.AreEqual(Card.RankEnum.Eight, slot.Hand[1].Rank);
             Assert.IsFalse(split.Available(slot));
+            Assert.AreEqual(startingBalance - 2 * config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
 
             slot.Index = 1;
             Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
             Assert.AreEqual(fourOfDiamonds, slot.Hand[0]);
             Assert.AreEqual(Card.RankEnum.Five, slot.Hand[1].Rank);
             Assert.IsFalse(split.Available(slot));
+            Assert.AreEqual(startingBalance - 2 * config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
 
             // ---
 
@@ -127,6 +187,8 @@ namespace TestBlackjack
             Assert.AreEqual(fourOfClubs, slot.Hand[0]);
             Assert.AreEqual(fourOfHearts, slot.Hand[1]);
             Assert.IsTrue(split.Available(slot));
+            Assert.AreEqual(startingBalance - 2 * config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
 
             split.Act(slot);
 
@@ -138,33 +200,60 @@ namespace TestBlackjack
             Assert.AreEqual(fourOfSpades, slot.Hand[0]);
             Assert.AreEqual(Card.RankEnum.Eight, slot.Hand[1].Rank);
             Assert.IsFalse(split.Available(slot));
+            Assert.AreEqual(startingBalance - 3 * config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
 
             slot.Index = 1;
             Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
             Assert.AreEqual(fourOfDiamonds, slot.Hand[0]);
             Assert.AreEqual(Card.RankEnum.Five, slot.Hand[1].Rank);
             Assert.IsFalse(split.Available(slot));
+            Assert.AreEqual(startingBalance - 3 * config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
 
             slot.Index = 2;
             Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
             Assert.IsFalse(split.Available(slot));
             Assert.AreEqual(fourOfClubs, slot.Hand[0]);
             Assert.AreEqual(Card.RankEnum.Seven, slot.Hand[1].Rank);
+            Assert.AreEqual(startingBalance - 3 * config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
 
             slot.Index = 3;
             Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
             Assert.IsFalse(split.Available(slot));
             Assert.AreEqual(fourOfHearts, slot.Hand[0]);
             Assert.AreEqual(Card.RankEnum.Three, slot.Hand[1].Rank);
-
-            Assert.AreEqual(startingBalance - 4 * config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(startingBalance - 3 * config.MinimumBet, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
         }
 
         [TestMethod]
         public void TestSurrender()
         {
-            LateSurrenderAction surrender = new(cfg);
+            Card ten = CardFactory.GetCard(Card.RankEnum.Ten, Card.SuitEnum.Diamonds);
+            BlackjackTableSlot slot = TestUtilities.MakeTestSlot();
+            IBlackjackConfig config = slot.Config;
+            int startingBalance = slot.Player.Bank.Balance;
+
+            slot.Hand.Add(ten);
+            slot.Hand.Add(ten);
+
+            LateSurrenderAction surrender = new(config);
             Assert.AreEqual(BlackjackActionEnum.LateSurrender.ToString(), surrender.ToString());
+
+            Assert.IsTrue(surrender.Available(slot));
+
+            bool done = surrender.Act(slot);
+
+            Assert.IsTrue(done);
+            Assert.AreEqual(2, slot.Hand.Count);
+            Assert.AreEqual(1, slot.NumHands);
+            Assert.AreEqual(0, slot.NumSplits);
+
+            Assert.AreEqual(startingBalance, slot.Player.Bank.Balance);
+            Assert.AreEqual(config.MinimumBet, slot.Pot.Balance);
+            Assert.IsTrue(slot.Surrendered);
         }
     }
 }

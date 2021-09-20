@@ -35,5 +35,14 @@ namespace TestBlackjack
             p.Bank.Deposit(bankroll);
             return p;
         }
+
+        public static BlackjackTableSlot MakeTestSlot()
+        {
+            IBlackjackConfig config = new StandardBlackjackConfig();
+            BlackjackTableSlot slot = new(config);
+            slot.Player = MakeTestPlayer();
+            slot.Player.Bank.Transfer(slot.Pot, config.MinimumBet);
+            return slot;
+        }
     }
 }
