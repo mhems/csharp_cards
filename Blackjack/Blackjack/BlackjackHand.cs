@@ -11,7 +11,7 @@ namespace Blackjack
     {
         #region Properties
         public override int Value => ComputeValue();
-        public int NumAces => this.Where(c => c.IsAce).Count();
+        public int NumAces => cards.Where(c => c.IsAce).Count();
         public bool HasAce => NumAces > 0;
         public bool IsSoft => HasAce && CheckSoft();
         public bool IsPair => (Count == 2) && (this[0].Rank == this[1].Rank);
@@ -31,7 +31,7 @@ namespace Blackjack
 
         private int ComputeValue()
         {
-            int value = this.Where(c => !c.IsAce).Select(c => CardValue(c)).Sum();
+            int value = cards.Where(c => !c.IsAce).Select(c => CardValue(c)).Sum();
             if (NumAces > 0)
             {
                 value += (NumAces - 1) * 1;
@@ -62,7 +62,7 @@ namespace Blackjack
 
         private bool CheckSoft()
         {
-            int value = this.Where(c => !c.IsAce).Select(c => CardValue(c)).Sum();
+            int value = cards.Where(c => !c.IsAce).Select(c => CardValue(c)).Sum();
             if (NumAces > 0)
             {
                 value += (NumAces - 1) * 1;
