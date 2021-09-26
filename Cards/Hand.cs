@@ -35,10 +35,10 @@ namespace Cards
             return c;
         }
 
-        public void Add(Card card)
+        public void Add(Card card, bool visible=true)
         {
             cards.Add(card);
-            Added?.Invoke(this, new CardAddedEventArgs(card));
+            Added?.Invoke(this, new CardAddedEventArgs(card, visible));
         }
 
         public void RemoveAt(int index)
@@ -63,9 +63,11 @@ namespace Cards
     public class CardAddedEventArgs : EventArgs
     {
         public Card AddedCard { get; set; }
-        public CardAddedEventArgs(Card addedCard)
+        public bool Visible { get; set; }
+        public CardAddedEventArgs(Card addedCard, bool visible=true)
         {
             AddedCard = addedCard;
+            Visible = visible;
         }
     }
 

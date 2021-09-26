@@ -16,6 +16,7 @@ namespace TestCards
         private bool clearHandled;
         private Card cardHandled;
         private int indexHandled;
+        private bool visibleHandled;
 
         [TestMethod]
         public void TestDiscardLast()
@@ -54,13 +55,15 @@ namespace TestCards
             hand.Add(added);
             Assert.IsTrue(addHandled);
             Assert.AreEqual(added, cardHandled);
+            Assert.IsTrue(visibleHandled);
             Assert.AreEqual(1, hand.Count);
             Assert.AreEqual(added, hand[0]);
 
             added = CardFactory.GetCard(Card.RankEnum.Ten, Card.SuitEnum.Diamonds);
-            hand.Add(added);
+            hand.Add(added, false);
             Assert.AreEqual(2, hand.Count);
             Assert.AreEqual(added, hand[1]);
+            Assert.IsFalse(visibleHandled);
         }
 
         [TestMethod]
@@ -115,6 +118,7 @@ namespace TestCards
         {
             addHandled = true;
             cardHandled = args.AddedCard;
+            visibleHandled = args.Visible;
         }
 
         public void RemoveHandler(object _, CardRemovedEventArgs args)
