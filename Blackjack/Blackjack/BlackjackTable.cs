@@ -358,8 +358,10 @@ namespace Blackjack
                 {
                     slot.Hand.Add(Shoe.Deal(1)[0]);
                 }
-                DealerHand.Add(Shoe.Deal(1)[0]);
             }
+            DealerHand.Add(Shoe.Deal(1)[0], false);
+            DealerHand.Add(Shoe.Deal(1)[1]);
+
 
             foreach (BlackjackTableSlot slot in ActiveSlots)
             {
