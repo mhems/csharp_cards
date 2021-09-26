@@ -500,8 +500,8 @@ namespace Blackjack
             InsurancePot.Transfer(Player.Bank);
 
             pots.RemoveRange(1, pots.Count - 1);
-            pots[0] = new();
-            InsurancePot = new();
+            pots[0].Empty();
+            InsurancePot.Empty();
 
             hands.RemoveRange(1, hands.Count - 1);
             Hand.Clear();

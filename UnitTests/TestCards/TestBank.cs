@@ -41,7 +41,7 @@ namespace TestCards
         [TestMethod]
         public void TestDeposit()
         {
-            Bank bank = new (100);
+            Bank bank = new(100);
             bank.Deposited += DepositHandler;
             bank.Withdrawn += WithdrawHandler;
 
@@ -110,6 +110,20 @@ namespace TestCards
 
             bank.Withdraw(100);
             Assert.AreEqual(-100, bank.Balance);
+        }
+
+        [TestMethod]
+        public void TestEmpty()
+        {
+            Bank bank = new(100);
+            bank.Withdrawn += WithdrawHandler;
+
+            bank.Empty();
+
+            Assert.AreEqual(0, bank.Balance);
+            Assert.IsTrue(gotWithdrawEvent);
+            Assert.AreEqual(100, eventAmount);
+            Assert.AreEqual(0, eventBalance);
         }
     }
 }

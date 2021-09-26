@@ -54,6 +54,11 @@ namespace Cards
             recipient.Deposit(amount);
         }
 
+        public virtual int Empty()
+        {
+            return Withdraw(Balance);
+        }
+
         public virtual int Withdraw(double amount)
         {
             return Withdraw(Round(amount));
