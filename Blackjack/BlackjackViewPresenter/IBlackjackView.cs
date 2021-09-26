@@ -18,7 +18,7 @@ namespace BlackjackViewPresenter
     {
         public int Value { get; set; }
         public void ClearHand();
-        public void AddCard(ICardView cardView);
+        public void AddCard(ICardView cardView, bool visible=true);
     }
 
     public interface IBankView
@@ -26,16 +26,16 @@ namespace BlackjackViewPresenter
         public int Balance { get; set; }
     }
 
-    public interface IPlayerView
+    public interface IBlackjackPlayerView
     {
         public IBankView Bank { get; set; }
+        public bool DisplayBalance { get; set; }
         public string Name { get; set; }
     }
 
     public interface IBlackjackCountView
     {
-        public void SetCount(BlackjackCountEnum system, int count);
-        public void Clear();
+        public void SetCount(BlackjackCountEnum system, float count);
     }
 
     public interface IShoeView
@@ -43,11 +43,14 @@ namespace BlackjackViewPresenter
         public int CutIndex { get; set; }
         public int Index { get; set; }
         public int Count { get; set; }
+
+        public void Burn(int n);
+        public void Shuffle();
     }
 
     public interface IBlackjackTableSlotView
     {
-        public IPlayerView Player { get; set; }
+        public IBlackjackPlayerView Player { get; set; }
         public IBankView[] Pots { get; set; }
         public IBlackjackHandView[] Hands { get; set; }
         public IBankView InsurancePot { get; set; }
