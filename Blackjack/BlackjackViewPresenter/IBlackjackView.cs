@@ -61,8 +61,8 @@ namespace BlackjackViewPresenter
 
     public interface IBlackjackConfigView
     {
-        public void Edit();
-        public void Save();
+        public event EventHandler<EventArgs> Changed;
+        public Dictionary<string, string> Config { get; set; }
     }
 
     public interface IBlackjackDecisionView

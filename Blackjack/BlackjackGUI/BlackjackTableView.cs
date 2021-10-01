@@ -17,7 +17,7 @@ namespace BlackjackGUI
         private readonly BlackjackInsuranceDialog insuranceView = new();
         private readonly BlackjackSurrenderDialog surrenderView = new();
 
-        public IBlackjackConfigView Config => throw new NotImplementedException();
+        public IBlackjackConfigView Config => configView;
         public IBlackjackTableSlotView DealerSlot => dealerSlotView;
         public IBlackjackTableSlotView[] PlayerSlots => slots;
         public IBlackjackDecisionView Decision => decisionView;

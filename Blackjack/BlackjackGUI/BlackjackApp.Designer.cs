@@ -46,7 +46,7 @@ namespace BlackjackGUI
             this.settingsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1132, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1188, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -73,21 +73,21 @@ namespace BlackjackGUI
             // configToolStripMenuItem
             // 
             this.configToolStripMenuItem.Name = "configToolStripMenuItem";
-            this.configToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.configToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
             this.configToolStripMenuItem.Text = "Config";
             // 
             // tableView
             // 
-            this.tableView.Location = new System.Drawing.Point(97, 62);
+            this.tableView.Location = new System.Drawing.Point(12, 27);
             this.tableView.Name = "tableView";
-            this.tableView.Size = new System.Drawing.Size(913, 460);
+            this.tableView.Size = new System.Drawing.Size(1156, 460);
             this.tableView.TabIndex = 1;
             // 
             // BlackjackApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1132, 593);
+            this.ClientSize = new System.Drawing.Size(1188, 507);
             this.Controls.Add(this.tableView);
             this.Controls.Add(this.menuStrip1);
             this.Name = "BlackjackApp";

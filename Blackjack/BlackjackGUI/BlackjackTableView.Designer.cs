@@ -38,6 +38,7 @@ namespace BlackjackGUI
             this.bankView = new BlackjackGUI.BankView();
             this.decisionView = new BlackjackGUI.BlackjackDecisionView();
             this.betView = new BlackjackGUI.BetView();
+            this.configView = new BlackjackGUI.BlackjackConfigView();
             this.SuspendLayout();
             // 
             // richTextBox1
@@ -112,10 +113,18 @@ namespace BlackjackGUI
             this.betView.Size = new System.Drawing.Size(132, 32);
             this.betView.TabIndex = 26;
             // 
+            // configView
+            // 
+            this.configView.Location = new System.Drawing.Point(938, 3);
+            this.configView.Name = "configView";
+            this.configView.Size = new System.Drawing.Size(213, 451);
+            this.configView.TabIndex = 27;
+            // 
             // BlackjackTableView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.configView);
             this.Controls.Add(this.betView);
             this.Controls.Add(this.decisionView);
             this.Controls.Add(this.bankView);
@@ -126,7 +135,7 @@ namespace BlackjackGUI
             this.Controls.Add(this.countView);
             this.Controls.Add(this.shoeView);
             this.Name = "BlackjackTableView";
-            this.Size = new System.Drawing.Size(913, 460);
+            this.Size = new System.Drawing.Size(1155, 460);
             this.ResumeLayout(false);
 
         }
@@ -142,5 +151,6 @@ namespace BlackjackGUI
         private BankView bankView;
         private BlackjackDecisionView decisionView;
         private BetView betView;
+        private BlackjackConfigView configView;
     }
 }
