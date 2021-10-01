@@ -11,36 +11,59 @@ namespace BlackjackViewPresenter
     public class BlackjackHandPresenter
     {
         private readonly IBlackjackHandView view;
-        private readonly BlackjackHand hand;
-        private readonly Func<Card, ICardView> cardViewFactory;
+        private BlackjackHand hand;
 
-        public BlackjackHandPresenter(IBlackjackHandView view, BlackjackHand hand, Func<Card, ICardView> cardViewFactory)
+        public BlackjackHand Hand
+        {
+            get => hand;
+            set
+            {
+                if (hand != null)
+                {
+                    UnregisterModel();
+                }
+                hand = value;
+                RegisterModel();
+            }
+        }
+
+
+        public BlackjackHandPresenter(IBlackjackHandView view)
         {
             this.view = view;
-            this.hand = hand;
-            this.cardViewFactory = cardViewFactory;
-            RegisterModel();
+        }
+
+        public BlackjackHandPresenter(IBlackjackHandView view, BlackjackHand hand) : this(view)
+        {
+            Hand = hand;
         }
 
         public void RegisterModel()
         {
-            hand.Added += CardAddedHandler;
-            hand.Cleared += HandClearedHandler;
+            Hand.Added += CardAddedHandler;
+            Hand.Cleared += HandClearedHandler;
         }
 
         public void UnregisterModel()
         {
-            hand.Added -= CardAddedHandler;
-            hand.Cleared -= HandClearedHandler;
+            Hand.Added -= CardAddedHandler;
+            Hand.Cleared -= HandClearedHandler;
         }
 
         private void CardAddedHandler(object obj, CardAddedEventArgs args)
         {
-            ICardView cardView = cardViewFactory.Invoke(args.AddedCard);
-            view.AddCard(cardView);
+            view.AddCard(args.AddedCard, args.Visible);
             if (obj is BlackjackHand hand)
             {
                 view.Value = hand.Value;
+                if (hand.IsBust)
+                {
+                    view.Bust = true;
+                }
+                if (hand.IsBlackjack)
+                {
+                    view.Blackjack = true;
+                }
             }
         }
 

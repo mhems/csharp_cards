@@ -30,10 +30,8 @@ namespace BlackjackGUI
         private void InitializeComponent()
         {
             this.potLabel = new System.Windows.Forms.Label();
-            this.playerValue = new System.Windows.Forms.Label();
+            this.valueTextBox = new System.Windows.Forms.Label();
             this.cardTable = new System.Windows.Forms.TableLayoutPanel();
-            this.blackjackCardView3 = new BlackjackGUI.BlackjackCardView();
-            this.blackjackCardView1 = new BlackjackGUI.BlackjackCardView();
             this.cardTable.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,16 +45,16 @@ namespace BlackjackGUI
             this.potLabel.TabIndex = 23;
             this.potLabel.Text = "pot";
             // 
-            // playerValue
+            // valueTextBox
             // 
-            this.playerValue.AutoSize = true;
-            this.playerValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.playerValue.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.playerValue.Location = new System.Drawing.Point(81, 15);
-            this.playerValue.Name = "playerValue";
-            this.playerValue.Size = new System.Drawing.Size(36, 30);
-            this.playerValue.TabIndex = 22;
-            this.playerValue.Text = "21";
+            this.valueTextBox.AutoSize = true;
+            this.valueTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.valueTextBox.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.valueTextBox.Location = new System.Drawing.Point(81, 15);
+            this.valueTextBox.Name = "valueTextBox";
+            this.valueTextBox.Size = new System.Drawing.Size(36, 30);
+            this.valueTextBox.TabIndex = 22;
+            this.valueTextBox.Text = "21";
             // 
             // cardTable
             // 
@@ -64,8 +62,6 @@ namespace BlackjackGUI
             this.cardTable.ColumnCount = 2;
             this.cardTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.cardTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.cardTable.Controls.Add(this.blackjackCardView3, 1, 0);
-            this.cardTable.Controls.Add(this.blackjackCardView1, 0, 0);
             this.cardTable.Location = new System.Drawing.Point(6, 65);
             this.cardTable.Margin = new System.Windows.Forms.Padding(0);
             this.cardTable.Name = "cardTable";
@@ -74,31 +70,13 @@ namespace BlackjackGUI
             this.cardTable.Size = new System.Drawing.Size(207, 125);
             this.cardTable.TabIndex = 26;
             // 
-            // blackjackCardView3
-            // 
-            this.blackjackCardView3.BackColor = System.Drawing.SystemColors.Control;
-            this.blackjackCardView3.Location = new System.Drawing.Point(23, 4);
-            this.blackjackCardView3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.blackjackCardView3.Name = "blackjackCardView3";
-            this.blackjackCardView3.Size = new System.Drawing.Size(108, 117);
-            this.blackjackCardView3.TabIndex = 0;
-            // 
-            // blackjackCardView1
-            // 
-            this.blackjackCardView1.BackColor = System.Drawing.SystemColors.Control;
-            this.blackjackCardView1.Location = new System.Drawing.Point(3, 4);
-            this.blackjackCardView1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.blackjackCardView1.Name = "blackjackCardView1";
-            this.blackjackCardView1.Size = new System.Drawing.Size(14, 117);
-            this.blackjackCardView1.TabIndex = 1;
-            // 
             // BlackjackHandView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.cardTable);
             this.Controls.Add(this.potLabel);
-            this.Controls.Add(this.playerValue);
+            this.Controls.Add(this.valueTextBox);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "BlackjackHandView";
             this.Size = new System.Drawing.Size(259, 207);
@@ -110,9 +88,7 @@ namespace BlackjackGUI
 
         #endregion
         private System.Windows.Forms.Label potLabel;
-        private System.Windows.Forms.Label playerValue;
+        private System.Windows.Forms.Label valueTextBox;
         private System.Windows.Forms.TableLayoutPanel cardTable;
-        private BlackjackCardView blackjackCardView3;
-        private BlackjackCardView blackjackCardView1;
     }
 }

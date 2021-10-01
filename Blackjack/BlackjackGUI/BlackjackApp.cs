@@ -21,11 +21,8 @@ namespace BlackjackGUI
 
         private void hitButton_Click(object sender, EventArgs e)
         {
-            playerView.HandView.AddCard(
-                CardViewFactory.GetCardView(
-                    CardFactory.GetCard(
-                        (Card.RankEnum)new Random().Next(0, 13),
-                        Card.SuitEnum.Hearts)));
+            Card card = CardFactory.GetCard((Card.RankEnum)new Random().Next(0, 13), Card.SuitEnum.Hearts);
+            playerView.HandView.AddCard(card);
         }
     }
 }

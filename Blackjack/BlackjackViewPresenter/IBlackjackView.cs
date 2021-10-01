@@ -17,8 +17,10 @@ namespace BlackjackViewPresenter
     public interface IBlackjackHandView
     {
         public int Value { get; set; }
+        public bool Bust { get; set; }
+        public bool Blackjack { get; set; }
         public void ClearHand();
-        public void AddCard(ICardView cardView, bool visible=true);
+        public void AddCard(Card card, bool visible=true);
     }
 
     public interface IBankView
