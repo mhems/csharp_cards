@@ -30,9 +30,9 @@ namespace BlackjackViewPresenter
         {
             this.view = view;
         }
-        protected override int BetInner()
+        protected override int BetInner(int minimumBet)
         {
-            view.Prompt();
+            view.Prompt(minimumBet);
             // wait
             return view.Bet;
         }

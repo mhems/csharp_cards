@@ -18,11 +18,11 @@ namespace Driver
 
             IBlackjackConfig config = new StandardBlackjackConfig();
 
-            human.BettingPolicy = new MinimumBettingPolicy(config);
+            human.BettingPolicy = new MinimumBettingPolicy();
             human.DecisionPolicy = new InputDecisionPolicy();
             human.InsurancePolicy = new DeclineInsurancePolicy();
 
-            bot.BettingPolicy = new MinimumBettingPolicy(config);
+            bot.BettingPolicy = new MinimumBettingPolicy();
             bot.DecisionPolicy = new BasicStrategyPolicies();
             bot.InsurancePolicy = new DeclineInsurancePolicy();
 

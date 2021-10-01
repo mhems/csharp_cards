@@ -76,7 +76,7 @@ namespace BlackjackViewPresenter
     {
         public int Bet { get; }
         public event EventHandler<EventArgs> BetMade;
-        public void Prompt();
+        public void Prompt(int minimumBet);
     }
 
     public interface IBlackjackInsuranceView

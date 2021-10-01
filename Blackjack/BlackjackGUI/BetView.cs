@@ -14,6 +14,7 @@ namespace BlackjackGUI
     public partial class BetView : UserControl, IBlackjackBetView
     {
         private int bet;
+        private int minimumBet;
 
         public int Bet => bet;
 
@@ -24,9 +25,10 @@ namespace BlackjackGUI
             InitializeComponent();
         }
 
-        public void Prompt()
+        public void Prompt(int minimumBet)
         {
-            if (Bet > 0)
+            this.minimumBet = minimumBet;
+            if (Bet >= minimumBet)
             {
                 BetMade?.Invoke(this, new EventArgs());
             }
@@ -35,7 +37,7 @@ namespace BlackjackGUI
         private void BetTextBox_TextChanged(object sender, EventArgs e)
         {
             bool isInt = Int32.TryParse(betTextBox.Text, out int val);
-            if (isInt)
+            if (isInt && val >= minimumBet)
             {
                 bet = val;
                 BetMade?.Invoke(this, new EventArgs());
