@@ -30,7 +30,7 @@ namespace BlackjackViewPresenter
 
     public interface IBlackjackPlayerView
     {
-        public IBankView Bank { get; set; }
+        public IBankView Bank { get; }
         public bool DisplayBalance { get; set; }
         public string Name { get; set; }
     }
@@ -52,11 +52,11 @@ namespace BlackjackViewPresenter
 
     public interface IBlackjackTableSlotView
     {
-        public IBlackjackPlayerView Player { get; set; }
-        public IBankView[] Pots { get; set; }
-        public IBlackjackHandView[] Hands { get; set; }
-        public IBankView InsurancePot { get; set; }
-        public int Index { get; set; }
+        public IBlackjackPlayerView Player { get;}
+        public IBankView[] Pots { get; }
+        public IBlackjackHandView[] Hands { get; }
+        public IBankView InsurancePot { get; }
+        public int Index { get; }
     }
 
     public interface IBlackjackConfigView
@@ -65,19 +65,42 @@ namespace BlackjackViewPresenter
         public void Save();
     }
 
-    public interface IBlackjackActionView
+    public interface IBlackjackDecisionView
     {
+        public BlackjackActionEnum Action { get; }
+        public event EventHandler<EventArgs> DecisionMade;
+        public void Prompt(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions);
+    }
 
+    public interface IBlackjackBetView
+    {
+        public int Bet { get; }
+        public event EventHandler<EventArgs> BetMade;
+        public void Prompt();
+    }
+
+    public interface IBlackjackInsuranceView
+    {
+        public bool Insured { get; }
+        public event EventHandler<EventArgs> DecisionMade;
+        public void Prompt(BlackjackHand hand, Card upCard);
+    }
+
+    public interface IBlackjackEarlySurrenderView
+    {
+        public bool Surrendered { get; }
+        public event EventHandler<EventArgs> DecisionMade;
+        public void Prompt(BlackjackHand hand, Card upCard);
     }
 
     public interface IBlackjackTableView
     {
-        public IBlackjackConfigView Config { get; set; }
-        public IBlackjackTableSlotView[] Slots { get; set; }
-        public IBlackjackTableSlotView DealerSlot { get; set; }
-        public IBlackjackActionView Action { get; set; }
-        public IBankView Bank { get; set; }
-        public IShoeView Shoe { get; set; }
-        public IBlackjackCountView Count { get; set; }
+        public IBlackjackConfigView Config { get; }
+        public IBlackjackTableSlotView DealerSlot { get; }
+        public IBlackjackTableSlotView[] PlayerSlots { get; }
+        public IBlackjackDecisionView Decision { get; }
+        public IBankView Bank { get; }
+        public IShoeView Shoe { get; }
+        public IBlackjackCountView Count { get; }
     }
 }

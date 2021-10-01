@@ -9,12 +9,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Cards;
 using BlackjackViewPresenter;
+using System.IO;
 
 namespace BlackjackGUI
 {
     public partial class BlackjackCardView : UserControl, ICardView
     {
-        private const string prefix = @"C:\Users\15854\source\repos\cs_cards\res\";
+        private const string prefix = @"..\..\..\images\";
         private static readonly string[] ranks = new string[] { "2", "3", "4", "5", "6", "7", "8", "9", "10", "j", "q", "k", "a" };
         private static readonly string[] suits = new string[] { "c", "s", "h", "d" };
         private bool faceUp;
@@ -31,8 +32,14 @@ namespace BlackjackGUI
             }
         }
 
+        public BlackjackCardView()
+        {
+            InitializeComponent();
+        }
+
         public BlackjackCardView(Card card, bool faceUp)
         {
+            InitializeComponent();
             Rank = card.Rank;
             Suit = card.Suit;
             FaceUp = faceUp;
@@ -40,6 +47,7 @@ namespace BlackjackGUI
 
         public void UpdateVisibility()
         {
+            string dir = Directory.GetCurrentDirectory();
             if (FaceUp)
             {
                 cardPictureBox.ImageLocation = GetCardPath();
@@ -57,7 +65,7 @@ namespace BlackjackGUI
 
         public static string GetCardBackPath()
         {
-            return "back.gif";
+            return $"{prefix}back.gif";
         }
     }
 

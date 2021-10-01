@@ -35,9 +35,8 @@ namespace BlackjackGUI
             // 
             // cardPictureBox
             // 
-            this.cardPictureBox.ImageLocation = "C:\\Users\\15854\\source\\repos\\cs_cards\\res\\ca.gif";
+            this.cardPictureBox.ImageLocation = "";
             this.cardPictureBox.Location = new System.Drawing.Point(1, 1);
-            this.cardPictureBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cardPictureBox.Name = "cardPictureBox";
             this.cardPictureBox.Size = new System.Drawing.Size(71, 96);
             this.cardPictureBox.TabIndex = 25;
@@ -45,13 +44,13 @@ namespace BlackjackGUI
             // 
             // BlackjackCardView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.Controls.Add(this.cardPictureBox);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "BlackjackCardView";
-            this.Size = new System.Drawing.Size(71, 96);
+            this.Size = new System.Drawing.Size(72, 97);
             ((System.ComponentModel.ISupportInitialize)(this.cardPictureBox)).EndInit();
             this.ResumeLayout(false);
 

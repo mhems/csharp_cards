@@ -29,10 +29,32 @@ namespace BlackjackGUI
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+            this.balanceLabel = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // balanceLabel
+            // 
+            this.balanceLabel.AutoSize = true;
+            this.balanceLabel.Location = new System.Drawing.Point(3, 3);
+            this.balanceLabel.Name = "balanceLabel";
+            this.balanceLabel.Size = new System.Drawing.Size(19, 15);
+            this.balanceLabel.TabIndex = 0;
+            this.balanceLabel.Text = "$0";
+            // 
+            // BankView
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.balanceLabel);
+            this.Name = "BankView";
+            this.Size = new System.Drawing.Size(49, 22);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Label balanceLabel;
     }
 }

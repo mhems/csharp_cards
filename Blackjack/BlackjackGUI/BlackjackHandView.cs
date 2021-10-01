@@ -37,7 +37,7 @@ namespace BlackjackGUI
         }
         public bool Bust
         {
-            get => Bust;
+            get => bust;
             set
             {
                 bust = value;

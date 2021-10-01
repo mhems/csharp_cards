@@ -1,7 +1,7 @@
 ﻿
 namespace BlackjackGUI
 {
-    partial class BlackjackPlayerView
+    partial class BetView
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,35 +29,36 @@ namespace BlackjackGUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.nameLabel = new System.Windows.Forms.Label();
-            this.bankView = new BlackjackGUI.BankView();
+            this.label1 = new System.Windows.Forms.Label();
+            this.betTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
-            // nameLabel
+            // label1
             // 
-            this.nameLabel.AutoSize = true;
-            this.nameLabel.Location = new System.Drawing.Point(3, 3);
-            this.nameLabel.Name = "nameLabel";
-            this.nameLabel.Size = new System.Drawing.Size(39, 15);
-            this.nameLabel.TabIndex = 0;
-            this.nameLabel.Text = "player";
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(6, 5);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(27, 15);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "Bet:";
             // 
-            // bankView1
+            // betTextBox
             // 
-            this.bankView.Balance = 0;
-            this.bankView.Location = new System.Drawing.Point(3, 21);
-            this.bankView.Name = "bankView1";
-            this.bankView.Size = new System.Drawing.Size(49, 22);
-            this.bankView.TabIndex = 1;
+            this.betTextBox.Location = new System.Drawing.Point(39, 2);
+            this.betTextBox.Name = "betTextBox";
+            this.betTextBox.Size = new System.Drawing.Size(90, 23);
+            this.betTextBox.TabIndex = 21;
+            this.betTextBox.TextChanged += new System.EventHandler(this.BetTextBox_TextChanged);
             // 
-            // BlackjackPlayerView
+            // BetView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.bankView);
-            this.Controls.Add(this.nameLabel);
-            this.Name = "BlackjackPlayerView";
-            this.Size = new System.Drawing.Size(93, 46);
+            this.Controls.Add(this.betTextBox);
+            this.Controls.Add(this.label1);
+            this.Name = "BetView";
+            this.Size = new System.Drawing.Size(132, 32);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -65,7 +66,7 @@ namespace BlackjackGUI
 
         #endregion
 
-        private System.Windows.Forms.Label nameLabel;
-        private BankView bankView;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox betTextBox;
     }
 }
