@@ -17,6 +17,7 @@ namespace BlackjackViewPresenter
         {
             this.view = view;
             this.config = config;
+            PresentConfigToView();
         }
 
         public void PresentConfigToView()

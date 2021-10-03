@@ -30,6 +30,7 @@ namespace BlackjackGUI
         public BlackjackConfigView()
         {
             InitializeComponent();
+            new BlackjackViewPresenter.BlackjackConfigPresenter(this, new Blackjack.StandardBlackjackConfig());
         }
 
         private void DisplayValues()
@@ -38,7 +39,7 @@ namespace BlackjackGUI
             {
                 UpdateValues();
             }
-            else
+            else if (config != null)
             {
                 foreach ((string name, string value) in config)
                 {

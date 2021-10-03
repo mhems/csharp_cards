@@ -92,12 +92,22 @@ namespace BlackjackViewPresenter
         public void Prompt(BlackjackHand hand, Card upCard);
     }
 
+    public interface ILogView
+    {
+        public void Log(string entry);
+        public void Clear();
+    }
+
     public interface IBlackjackTableView
     {
+        public ILogView Log { get; }
         public IBlackjackConfigView Config { get; }
         public IBlackjackTableSlotView DealerSlot { get; }
         public IBlackjackTableSlotView[] PlayerSlots { get; }
         public IBlackjackDecisionView Decision { get; }
+        public IBlackjackBetView Bet { get; }
+        public IBlackjackInsuranceView Insurance { get; }
+        public IBlackjackEarlySurrenderView Surrender { get; }
         public IBankView Bank { get; }
         public IShoeView Shoe { get; }
         public IBlackjackCountView Count { get; }

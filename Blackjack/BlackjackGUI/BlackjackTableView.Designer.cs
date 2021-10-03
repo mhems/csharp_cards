@@ -29,7 +29,6 @@ namespace BlackjackGUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.countView = new BlackjackGUI.BlackjackCountView();
             this.shoeView = new BlackjackGUI.ShoeView();
             this.dealerSlotView = new BlackjackGUI.BlackjackTableSlotView();
@@ -39,15 +38,8 @@ namespace BlackjackGUI
             this.decisionView = new BlackjackGUI.BlackjackDecisionView();
             this.betView = new BlackjackGUI.BetView();
             this.configView = new BlackjackGUI.BlackjackConfigView();
+            this.logView = new BlackjackGUI.LogView();
             this.SuspendLayout();
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Location = new System.Drawing.Point(706, 3);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(203, 451);
-            this.richTextBox1.TabIndex = 12;
-            this.richTextBox1.Text = "";
             // 
             // countView
             // 
@@ -120,17 +112,24 @@ namespace BlackjackGUI
             this.configView.Size = new System.Drawing.Size(213, 451);
             this.configView.TabIndex = 27;
             // 
+            // logView
+            // 
+            this.logView.Location = new System.Drawing.Point(800, 4);
+            this.logView.Name = "logView";
+            this.logView.Size = new System.Drawing.Size(266, 573);
+            this.logView.TabIndex = 28;
+            // 
             // BlackjackTableView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.logView);
             this.Controls.Add(this.configView);
             this.Controls.Add(this.betView);
             this.Controls.Add(this.decisionView);
             this.Controls.Add(this.bankView);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.playerSlotView);
-            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.dealerSlotView);
             this.Controls.Add(this.countView);
             this.Controls.Add(this.shoeView);
@@ -141,8 +140,6 @@ namespace BlackjackGUI
         }
 
         #endregion
-
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private BlackjackCountView countView;
         private ShoeView shoeView;
         private BlackjackTableSlotView dealerSlotView;
@@ -152,5 +149,6 @@ namespace BlackjackGUI
         private BlackjackDecisionView decisionView;
         private BetView betView;
         private BlackjackConfigView configView;
+        private LogView logView;
     }
 }
