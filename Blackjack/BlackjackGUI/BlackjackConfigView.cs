@@ -14,7 +14,6 @@ namespace BlackjackGUI
 {
     public partial class BlackjackConfigView : UserControl, IBlackjackConfigView
     {
-        private readonly BlackjackConfigPresenter presenter;
         private Dictionary<string, string> config;
         private readonly Dictionary<string, TextBox> labelMap = new();
         public Dictionary<string, string> Config
@@ -26,11 +25,11 @@ namespace BlackjackGUI
                 DisplayValues();
             }
         }
+        public BlackjackConfigPresenter Presenter { get; set; }
 
         public BlackjackConfigView()
         {
             InitializeComponent();
-            new BlackjackViewPresenter.BlackjackConfigPresenter(this, new Blackjack.StandardBlackjackConfig());
         }
 
         private void DisplayValues()
@@ -76,7 +75,7 @@ namespace BlackjackGUI
             {
                 config[name] = box.Text;
             }
-            HashSet<string> badKeys = presenter.SaveViewToConfig();
+            HashSet<string> badKeys = Presenter.SaveViewToConfig();
             if (badKeys.Count > 0)
             {
                 foreach (string key in badKeys)

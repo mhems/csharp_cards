@@ -14,7 +14,7 @@ namespace BlackjackGUI
     public partial class BlackjackTableSlotView : UserControl, IBlackjackTableSlotView
     {
         private readonly List<IBankView> potList = new();
-        private readonly List<IBlackjackHandView> handList = new();
+        private readonly List<IBlackjackHandView> handList = new() { new BlackjackHandView() };
 
         public IBlackjackPlayerView Player => player;
         public IBankView[] Pots => potList.ToArray();

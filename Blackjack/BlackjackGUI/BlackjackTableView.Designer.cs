@@ -33,7 +33,7 @@ namespace BlackjackGUI
             this.shoeView = new BlackjackGUI.ShoeView();
             this.dealerSlotView = new BlackjackGUI.BlackjackTableSlotView();
             this.playerSlotView = new BlackjackGUI.BlackjackTableSlotView();
-            this.button1 = new System.Windows.Forms.Button();
+            this.playButton = new System.Windows.Forms.Button();
             this.bankView = new BlackjackGUI.BankView();
             this.decisionView = new BlackjackGUI.BlackjackDecisionView();
             this.betView = new BlackjackGUI.BetView();
@@ -74,14 +74,15 @@ namespace BlackjackGUI
             this.playerSlotView.Size = new System.Drawing.Size(213, 170);
             this.playerSlotView.TabIndex = 23;
             // 
-            // button1
+            // playButton
             // 
-            this.button1.Location = new System.Drawing.Point(42, 351);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(119, 73);
-            this.button1.TabIndex = 19;
-            this.button1.Text = "Play";
-            this.button1.UseVisualStyleBackColor = true;
+            this.playButton.Location = new System.Drawing.Point(42, 351);
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(119, 73);
+            this.playButton.TabIndex = 19;
+            this.playButton.Text = "Play";
+            this.playButton.UseVisualStyleBackColor = true;
+            this.playButton.Click += new System.EventHandler(this.PlayButton_Click);
             // 
             // bankView
             // 
@@ -128,7 +129,7 @@ namespace BlackjackGUI
             this.Controls.Add(this.betView);
             this.Controls.Add(this.decisionView);
             this.Controls.Add(this.bankView);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.playButton);
             this.Controls.Add(this.playerSlotView);
             this.Controls.Add(this.dealerSlotView);
             this.Controls.Add(this.countView);
@@ -144,7 +145,7 @@ namespace BlackjackGUI
         private ShoeView shoeView;
         private BlackjackTableSlotView dealerSlotView;
         private BlackjackTableSlotView playerSlotView;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button playButton;
         private BankView bankView;
         private BlackjackDecisionView decisionView;
         private BetView betView;

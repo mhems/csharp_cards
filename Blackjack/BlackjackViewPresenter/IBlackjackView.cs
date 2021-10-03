@@ -62,6 +62,7 @@ namespace BlackjackViewPresenter
     public interface IBlackjackConfigView
     {
         public Dictionary<string, string> Config { get; set; }
+        public BlackjackConfigPresenter Presenter { get; set; }
     }
 
     public interface IBlackjackDecisionView
@@ -111,5 +112,7 @@ namespace BlackjackViewPresenter
         public IBankView Bank { get; }
         public IShoeView Shoe { get; }
         public IBlackjackCountView Count { get; }
+
+        public event EventHandler<EventArgs> RoundStarted;
     }
 }

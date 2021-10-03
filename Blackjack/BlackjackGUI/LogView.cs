@@ -16,7 +16,6 @@ namespace BlackjackGUI
         public LogView()
         {
             InitializeComponent();
-            new BlackjackViewPresenter.LogPresenter(this, new Blackjack.BlackjackEventLogger());
         }
 
         public void Clear()

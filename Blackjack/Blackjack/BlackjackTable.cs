@@ -53,6 +53,7 @@ namespace Blackjack
         public int NumSlots => slots.Length;
         public int NumOccupiedSlots => slots.Where(s => s.Occupied).Count();
         public int NumActiveSlots => ActiveSlots.Length;
+        public BlackjackTableSlot[] Slots => slots;
         public BlackjackTableSlot[] ActiveSlots => slots.Where(s => s.Active).ToArray();
         #endregion
 
@@ -360,7 +361,7 @@ namespace Blackjack
                 }
             }
             DealerHand.Add(Shoe.Deal(1)[0], false);
-            DealerHand.Add(Shoe.Deal(1)[1]);
+            DealerHand.Add(Shoe.Deal(1)[0]);
 
 
             foreach (BlackjackTableSlot slot in ActiveSlots)

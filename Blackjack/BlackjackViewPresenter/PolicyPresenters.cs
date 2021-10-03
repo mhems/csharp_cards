@@ -23,7 +23,7 @@ namespace BlackjackViewPresenter
             // i cannot find one though.
             while (!waiter.DecisionMade)
             {
-                Thread.Sleep(1);
+                Thread.Sleep(1000);
             }
         }
 

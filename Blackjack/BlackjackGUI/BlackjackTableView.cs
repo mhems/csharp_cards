@@ -29,10 +29,17 @@ namespace BlackjackGUI
         public IShoeView Shoe => shoeView;
         public IBlackjackCountView Count => countView;
 
+        public event EventHandler<EventArgs> RoundStarted;
+
         public BlackjackTableView()
         {
             InitializeComponent();
             slots = new BlackjackTableSlotView[1] { playerSlotView };
+        }
+
+        private void PlayButton_Click(object sender, EventArgs args)
+        {
+            RoundStarted?.Invoke(this, new EventArgs());
         }
     }
 }

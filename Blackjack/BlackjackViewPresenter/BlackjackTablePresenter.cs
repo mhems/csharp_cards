@@ -16,6 +16,7 @@ namespace BlackjackViewPresenter
         {
             this.view = view;
             this.table = table;
+            view.RoundStarted += StartRoundHandler;
             RegisterModel();
         }
 
@@ -27,6 +28,11 @@ namespace BlackjackViewPresenter
         public void UnregisterModel()
         {
 
+        }
+
+        private void StartRoundHandler(object _, EventArgs args)
+        {
+            table.PlayRound();
         }
     }
 }

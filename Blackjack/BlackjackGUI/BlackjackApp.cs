@@ -8,22 +8,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Cards;
-using Blackjack;
 using BlackjackViewPresenter;
 
 namespace BlackjackGUI
 {
     public partial class BlackjackApp : Form
     {
+        public IBlackjackTableView Table => tableView;
         public BlackjackApp()
         {
             InitializeComponent();
-        }
-
-        private void hitButton_Click(object sender, EventArgs e)
-        {
-            Card card = CardFactory.GetCard((Card.RankEnum)new Random().Next(0, 13), Card.SuitEnum.Hearts);
         }
     }
 }
