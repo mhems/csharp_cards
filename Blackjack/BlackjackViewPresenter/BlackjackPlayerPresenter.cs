@@ -16,11 +16,12 @@ namespace BlackjackViewPresenter
         {
             this.view = view;
             this.player = player;
+            view.PlayerName = player.Name;
         }
 
         public BlackjackPlayer CreateFromView()
         {
-            BlackjackPlayer player = new(view.Name);
+            BlackjackPlayer player = new(view.PlayerName);
             player.Bank.Deposit(view.Bank.Balance);
             return player;
         }

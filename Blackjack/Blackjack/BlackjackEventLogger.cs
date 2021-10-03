@@ -215,7 +215,12 @@ namespace Blackjack
         }
         public void OnShoeDealt(object _, DealtEventArgs args)
         {
-            Log($"shoe dealt {args.DealtCards.Length} cards: {String.Join(",", args.DealtCards)}");
+            string msg = $"shoe dealt {args.DealtCards.Length}";
+            if (args.Visible)
+            {
+                msg += $" cards: {String.Join(",", args.DealtCards)}";
+            }
+            Log(msg);
         }
         public void OnShoeBurnt(object _, BurnEventArgs args)
         {

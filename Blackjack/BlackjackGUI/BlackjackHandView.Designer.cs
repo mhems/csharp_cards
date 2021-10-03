@@ -29,21 +29,10 @@ namespace BlackjackGUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.potLabel = new System.Windows.Forms.Label();
             this.valueTextBox = new System.Windows.Forms.Label();
             this.cardTable = new System.Windows.Forms.TableLayoutPanel();
             this.cardTable.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // potLabel
-            // 
-            this.potLabel.AutoSize = true;
-            this.potLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.potLabel.Location = new System.Drawing.Point(6, 15);
-            this.potLabel.Name = "potLabel";
-            this.potLabel.Size = new System.Drawing.Size(43, 28);
-            this.potLabel.TabIndex = 23;
-            this.potLabel.Text = "pot";
             // 
             // valueTextBox
             // 
@@ -75,7 +64,6 @@ namespace BlackjackGUI
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.cardTable);
-            this.Controls.Add(this.potLabel);
             this.Controls.Add(this.valueTextBox);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "BlackjackHandView";
@@ -87,7 +75,6 @@ namespace BlackjackGUI
         }
 
         #endregion
-        private System.Windows.Forms.Label potLabel;
         private System.Windows.Forms.Label valueTextBox;
         private System.Windows.Forms.TableLayoutPanel cardTable;
     }

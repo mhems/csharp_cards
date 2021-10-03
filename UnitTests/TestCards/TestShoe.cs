@@ -17,6 +17,7 @@ namespace TestCards
         private bool gotBurnEvent = false;
         private Card[] dealtCards = null;
         private int numBurnt = 0;
+        private bool visible = false;
 
         [TestCleanup]
         public void Cleanup()
@@ -27,6 +28,7 @@ namespace TestCards
             gotBurnEvent = false;
             dealtCards = null;
             numBurnt = 0;
+            visible = false;
         }
 
         [TestMethod]
@@ -58,6 +60,7 @@ namespace TestCards
         {
             gotDealtEvent = true;
             dealtCards = args.DealtCards;
+            visible = args.Visible;
         }
 
         private void ShuffleHandler(object obj, EventArgs args)
@@ -120,6 +123,7 @@ namespace TestCards
         public void TestShoeDeal()
         {
             Shoe shoe = new (6);
+            shoe.Dealt += DealtHandler;
             Assert.AreEqual(6 * 52, shoe.NumCardsRemaining);
             shoe.Exhausted += ExhaustedHandler;
             shoe.Shuffling += ShuffleHandler;
@@ -130,12 +134,14 @@ namespace TestCards
             Assert.IsFalse(shoe.IsExhausted);
             Assert.IsFalse(gotExhaustedEvent);
             Assert.IsFalse(gotShuffleEvent);
+            Assert.IsTrue(visible);
 
-            cards = shoe.Deal(260);
+            cards = shoe.Deal(260, false);
             Assert.AreEqual(260, shoe.NumCardsRemaining);
             Assert.AreEqual(260, cards.Length);
             Assert.IsTrue(gotExhaustedEvent);
             Assert.IsTrue(gotShuffleEvent);
+            Assert.IsFalse(visible);
         }
 
         private void BurnHandler(object obj, BurnEventArgs args)

@@ -22,17 +22,22 @@ namespace BlackjackViewPresenter
 
         public void RegisterModel()
         {
-
+            table.RoundEnded += RoundEndedHandler;
         }
 
         public void UnregisterModel()
         {
-
+            table.RoundEnded -= RoundEndedHandler;
         }
 
         private void StartRoundHandler(object _, EventArgs args)
         {
             table.PlayRound();
+        }
+
+        private void RoundEndedHandler(object _, EventArgs args)
+        {
+            view.EndRound();
         }
     }
 }

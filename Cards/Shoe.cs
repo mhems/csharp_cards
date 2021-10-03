@@ -49,7 +49,7 @@ namespace Cards
             Shuffle();
         }
 
-        public Card[] Deal(int n)
+        public Card[] Deal(int n, bool visible=true)
         {
             Card[] ret = new Card[n];
             for (int i = 0; i < n; i++)
@@ -58,7 +58,7 @@ namespace Cards
                 ret[i] = cards[Index];
                 Index++;
             }
-            Dealt?.Invoke(this, new DealtEventArgs(ret));
+            Dealt?.Invoke(this, new DealtEventArgs(ret, visible));
             return ret;
         }
 
@@ -101,9 +101,11 @@ namespace Cards
     public class DealtEventArgs : EventArgs
     {
         public Card[] DealtCards { get; private set; }
-        public DealtEventArgs(Card[] cards)
+        public bool Visible { get; private set; }
+        public DealtEventArgs(Card[] cards, bool visible)
         {
             DealtCards = cards;
+            Visible = visible;
         }
     }
 

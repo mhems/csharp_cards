@@ -32,7 +32,7 @@ namespace BlackjackViewPresenter
     {
         public IBankView Bank { get; }
         public bool DisplayBalance { get; set; }
-        public string Name { get; set; }
+        public string PlayerName { get; set; }
     }
 
     public interface IBlackjackCountView
@@ -114,5 +114,7 @@ namespace BlackjackViewPresenter
         public IBlackjackCountView Count { get; }
 
         public event EventHandler<EventArgs> RoundStarted;
+
+        public void EndRound();
     }
 }

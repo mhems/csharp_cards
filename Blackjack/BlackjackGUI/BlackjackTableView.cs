@@ -40,6 +40,12 @@ namespace BlackjackGUI
         private void PlayButton_Click(object sender, EventArgs args)
         {
             RoundStarted?.Invoke(this, new EventArgs());
+            playButton.Enabled = false;
+        }
+
+        public void EndRound()
+        {
+            playButton.Enabled = true;
         }
     }
 }

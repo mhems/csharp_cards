@@ -36,10 +36,12 @@ namespace BlackjackGUI
             ShoePresenter shoePresenter = new(tableView.Shoe, table.Shoe);
             BlackjackCountPresenter countPresenter = new(tableView.Count, table.Count);
             BankPresenter houseBankPresenter = new(tableView.Bank, table.TableBank);
+
             BlackjackTableSlotPresenter dealerSlotPresenter = new(tableView.DealerSlot, table.DealerSlot);
             BlackjackPlayerPresenter dealerPresenter = new(tableView.DealerSlot.Player, table.Dealer);
             BankPresenter dealerBankPresenter = new(tableView.DealerSlot.Player.Bank, table.Dealer.Bank);
             BlackjackHandPresenter dealerHandPresenter = new(tableView.DealerSlot.Hands[0], table.DealerSlot.Hand);
+            BankPresenter dealerPotPresenter = new(tableView.DealerSlot.Pots[0], table.DealerSlot.Pot);
 
             BlackjackPlayer player = new("matt");
             player.Bank.Deposit(1000);
@@ -47,6 +49,8 @@ namespace BlackjackGUI
             BlackjackPlayerPresenter playerPresenter = new(tableView.PlayerSlots[0].Player, table.Slots[0].Player);
             BankPresenter playerBankPresenter = new(tableView.PlayerSlots[0].Player.Bank, table.Slots[0].Player.Bank);
             BlackjackHandPresenter playerHandPresenter = new(tableView.PlayerSlots[0].Hands[0], table.Slots[0].Hand);
+            BankPresenter playerPotPresenter = new(tableView.PlayerSlots[0].Pots[0], table.Slots[0].Pot);
+            BankPresenter playerInsurancePresenter = new(tableView.PlayerSlots[0].InsurancePot, table.Slots[0].InsurancePot);
 
             InteractiveDecisionPolicy decisionPresenter = new(tableView.Decision);
             InteractiveBettingPolicy bettingPresenter = new(tableView.Bet);

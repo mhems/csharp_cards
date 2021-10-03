@@ -360,7 +360,7 @@ namespace Blackjack
                     slot.Hand.Add(Shoe.Deal(1)[0]);
                 }
             }
-            DealerHand.Add(Shoe.Deal(1)[0], false);
+            DealerHand.Add(Shoe.Deal(1, false)[0], false);
             DealerHand.Add(Shoe.Deal(1)[0]);
 
 
@@ -368,7 +368,7 @@ namespace Blackjack
             {
                 HandDealt?.Invoke(this, new HandDealtEventArgs(slot.Hand, slot.Player));
             }
-            HandDealt?.Invoke(this, new HandDealtEventArgs(DealerHand, Dealer));
+            // TODO: how to have event for dealer?
         }
 
         private void EndRound()
