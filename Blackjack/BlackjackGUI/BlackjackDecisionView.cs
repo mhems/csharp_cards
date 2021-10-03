@@ -27,6 +27,7 @@ namespace BlackjackGUI
             actionButtonMap.Add(BlackjackActionEnum.Double, doubleButton);
             actionButtonMap.Add(BlackjackActionEnum.Split, splitButton);
             actionButtonMap.Add(BlackjackActionEnum.LateSurrender, surrenderButton);
+            EnableAll(false);
         }
 
         public BlackjackActionEnum Action { get; private set; }
