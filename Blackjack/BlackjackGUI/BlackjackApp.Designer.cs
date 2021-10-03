@@ -80,18 +80,18 @@ namespace BlackjackGUI
             // 
             this.tableView.Location = new System.Drawing.Point(12, 27);
             this.tableView.Name = "tableView";
-            this.tableView.Size = new System.Drawing.Size(1156, 460);
+            this.tableView.Size = new System.Drawing.Size(1200, 460);
             this.tableView.TabIndex = 1;
             // 
             // BlackjackApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1188, 507);
+            this.ClientSize = new System.Drawing.Size(1200, 507);
             this.Controls.Add(this.tableView);
             this.Controls.Add(this.menuStrip1);
             this.Name = "BlackjackApp";
-            this.Text = "Form1";
+            this.Text = "Blackjack";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);

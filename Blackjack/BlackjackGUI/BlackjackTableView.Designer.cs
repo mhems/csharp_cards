@@ -107,14 +107,14 @@ namespace BlackjackGUI
             // 
             // configView
             // 
-            this.configView.Location = new System.Drawing.Point(938, 3);
+            this.configView.Location = new System.Drawing.Point(980, 3);
             this.configView.Name = "configView";
             this.configView.Size = new System.Drawing.Size(213, 451);
             this.configView.TabIndex = 27;
             // 
             // logView
             // 
-            this.logView.Location = new System.Drawing.Point(800, 4);
+            this.logView.Location = new System.Drawing.Point(700, 4);
             this.logView.Name = "logView";
             this.logView.Size = new System.Drawing.Size(266, 573);
             this.logView.TabIndex = 28;
@@ -134,7 +134,7 @@ namespace BlackjackGUI
             this.Controls.Add(this.countView);
             this.Controls.Add(this.shoeView);
             this.Name = "BlackjackTableView";
-            this.Size = new System.Drawing.Size(1155, 460);
+            this.Size = new System.Drawing.Size(1200, 460);
             this.ResumeLayout(false);
 
         }
