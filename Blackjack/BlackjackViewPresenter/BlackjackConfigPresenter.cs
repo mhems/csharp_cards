@@ -17,24 +17,20 @@ namespace BlackjackViewPresenter
         {
             this.view = view;
             this.config = config;
-            //view.Changed += OnConfigChanged;
         }
 
         public void PresentConfigToView()
         {
             Dictionary<string, string> strCfg = new();
             Type configType = config.GetType();
-            int i = 0;
+
             foreach (PropertyInfo prop in configType.GetProperties())
             {
-                if (++i == 10)
-                {
-                    break;
-                }
                 string propName = prop.Name;
                 string propVal = prop.GetValue(config)?.ToString() ?? "null";
                 strCfg.Add(propName, propVal);
             }
+
             view.Config = strCfg;
         }
 
@@ -104,6 +100,7 @@ namespace BlackjackViewPresenter
             {
                 return str;
             }
+
             return char.ToUpper(str[0]) + str.Substring(1);
         }
     }

@@ -61,7 +61,6 @@ namespace BlackjackViewPresenter
 
     public interface IBlackjackConfigView
     {
-        public event EventHandler<EventArgs> Changed;
         public Dictionary<string, string> Config { get; set; }
     }
 

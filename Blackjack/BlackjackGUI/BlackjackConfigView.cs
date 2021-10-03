@@ -14,9 +14,9 @@ namespace BlackjackGUI
 {
     public partial class BlackjackConfigView : UserControl, IBlackjackConfigView
     {
-        private BlackjackConfigPresenter presenter;
+        private readonly BlackjackConfigPresenter presenter;
         private Dictionary<string, string> config;
-        private Dictionary<string, TextBox> labelMap = new();
+        private readonly Dictionary<string, TextBox> labelMap = new();
         public Dictionary<string, string> Config
         { 
             get => config;
@@ -27,45 +27,46 @@ namespace BlackjackGUI
             }
         }
 
-        public event EventHandler<EventArgs> Changed;
-
         public BlackjackConfigView()
         {
             InitializeComponent();
-            presenter = new(this, new StandardBlackjackConfig());
-            presenter.PresentConfigToView();
         }
 
         private void DisplayValues()
         {
-            labelMap.Clear();
-            for (int i = 1; i < tableLayoutPanel.RowCount; i++)
+            if (labelMap.Count > 0)
             {
-               // tableLayoutPanel.Controls.RemoveAt(i);
+                UpdateValues();
             }
-
-            // writes config to GUI
-            foreach ((string name, string value) in config)
+            else
             {
-                tableLayoutPanel.RowCount++;
-                Label nameLbl = new();
-                nameLbl.AutoSize = true;
-                nameLbl.Text = name;
-                nameLbl.Margin = new Padding(0, 5, 0, 0);
-                TextBox valBox = new();
-                valBox.Text = value;
-                labelMap.Add(name, valBox);
-                tableLayoutPanel.Controls.Add(nameLbl, 0, tableLayoutPanel.RowCount - 1);
-                tableLayoutPanel.Controls.Add(valBox,  1, tableLayoutPanel.RowCount - 1);
+                foreach ((string name, string value) in config)
+                {
+                    tableLayoutPanel.RowCount++;
+                    Label nameLbl = new();
+                    nameLbl.AutoSize = true;
+                    nameLbl.Text = name;
+                    nameLbl.Margin = new Padding(0, 5, 0, 0);
+                    TextBox valBox = new();
+                    valBox.Text = value;
+                    labelMap.Add(name, valBox);
+                    tableLayoutPanel.Controls.Add(nameLbl, 0, tableLayoutPanel.RowCount - 1);
+                    tableLayoutPanel.Controls.Add(valBox, 1, tableLayoutPanel.RowCount - 1);
+                }
             }
         }
 
-        private void RestoreButton_Click(object sender, EventArgs e)
+        private void UpdateValues()
         {
             foreach ((string name, TextBox box) in labelMap)
             {
                 box.Text = config[name];
             }
+        }
+
+        private void RestoreButton_Click(object sender, EventArgs e)
+        {
+            UpdateValues();
         }
 
         private void SaveButton_Click(object sender, EventArgs e)
