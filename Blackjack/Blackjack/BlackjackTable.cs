@@ -421,6 +421,10 @@ namespace Blackjack
 
         public void BeginRound()
         {
+            Index = 0;
+            hands.RemoveRange(1, hands.Count - 1);
+            Hand.Clear();
+
             RoundBegun?.Invoke(this, new EventArgs());
         }
 
@@ -509,9 +513,6 @@ namespace Blackjack
             pots.RemoveRange(1, pots.Count - 1);
             pots[0].Empty();
             InsurancePot.Empty();
-
-            hands.RemoveRange(1, hands.Count - 1);
-            Hand.Clear();
 
             Settled = false;
 
