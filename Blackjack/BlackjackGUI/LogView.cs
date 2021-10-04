@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Blackjack;
 using BlackjackViewPresenter;
 
 namespace BlackjackGUI
@@ -25,6 +26,11 @@ namespace BlackjackGUI
 
         public void Log(string entry)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => Log(entry)));
+                return;
+            }
             textBox.Text += entry + "\n";
         }
 

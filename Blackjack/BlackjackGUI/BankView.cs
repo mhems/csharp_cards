@@ -1,4 +1,5 @@
 ﻿using BlackjackViewPresenter;
+using Cards;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,8 +27,18 @@ namespace BlackjackGUI
             set
             {
                 balance = value;
-                balanceLabel.Text = $"${balance}";
+                UpdateBalance();
             }
+        }
+
+        private void UpdateBalance()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => UpdateBalance()));
+                return;
+            }
+            balanceLabel.Text = $"${balance}";
         }
     }
 }

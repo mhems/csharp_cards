@@ -41,6 +41,11 @@ namespace BlackjackGUI
 
         public void SetCount(BlackjackCountEnum system, float count)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => SetCount(system, count)));
+                return;
+            }
             Label lbl = (Label)tableLayoutPanel.GetControlFromPosition(1, (int)system + 1);
             lbl.Text = count.ToString();
         }

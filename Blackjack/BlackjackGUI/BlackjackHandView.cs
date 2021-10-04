@@ -44,7 +44,6 @@ namespace BlackjackGUI
                 UpdateBust();
             }
         }
-
         public bool Blackjack
         {
             get => blackjack;
@@ -63,6 +62,11 @@ namespace BlackjackGUI
  
         public void AddCard(Card card, bool visible=true)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => AddCard(card, visible)));
+                return;
+            }
             BlackjackCardView cardView = CardViewFactory.GetCardView(card, visible);
             if (count >= 2)
             {
@@ -77,31 +81,65 @@ namespace BlackjackGUI
 
         public void ClearHand()
         {
-            for (int i = count; i >= 0; i--)
+            if (InvokeRequired)
             {
-                cardTable.Controls.RemoveAt(i);
+                Invoke(new MethodInvoker(() => ClearHand()));
+                return;
+            }
+            for (int i = cardTable.ColumnCount - 1; i >= 0; i--)
+            {
+                try
+                {
+                    cardTable.Controls.RemoveAt(i);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                    MessageBox.Show(e.StackTrace);
+                }
             }
             RestoreValue();
+            count = 0;
+            cardTable.ColumnCount = 2;
         }
 
         private void UpdateValue()
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => UpdateValue()));
+                return;
+            }
             valueTextBox.Text = Value.ToString();
         }
 
         private void RestoreValue()
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => RestoreValue()));
+                return;
+            }
             valueTextBox.Text = string.Empty;
             valueTextBox.ForeColor = Color.Black;
         }
 
         private void UpdateBust()
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => UpdateBust()));
+                return;
+            }
             valueTextBox.ForeColor = Color.Red;
         }
 
         private void UpdateBlackjack()
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => UpdateBlackjack()));
+                return;
+            }
             valueTextBox.ForeColor = Color.Green;
         }
     }

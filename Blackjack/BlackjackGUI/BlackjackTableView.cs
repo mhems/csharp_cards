@@ -45,6 +45,11 @@ namespace BlackjackGUI
 
         public void EndRound()
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => EndRound()));
+                return;
+            }
             playButton.Enabled = true;
         }
     }

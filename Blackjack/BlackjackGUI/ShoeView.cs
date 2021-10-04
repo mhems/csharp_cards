@@ -28,7 +28,7 @@ namespace BlackjackGUI
             set
             {
                 cutIndex = value;
-                cutIndexLabel.Text = cutIndex.ToString();
+                UpdateCutIndex();
             }
         }
         public int Index
@@ -37,7 +37,7 @@ namespace BlackjackGUI
             set
             {
                 index = value;
-                indexLabel.Text = index.ToString();
+                UpdateIndex();
             }
         }
         public int Count
@@ -46,7 +46,7 @@ namespace BlackjackGUI
             set
             {
                 count = value;
-                countLabel.Text = count.ToString();
+                UpdateCount();
             }
         }
 
@@ -58,6 +58,42 @@ namespace BlackjackGUI
         public void Shuffle()
         {
             throw new NotImplementedException();
+        }
+
+        private void UpdateCutIndex()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => cutIndexLabel.Text = cutIndex.ToString()));
+            }
+            else
+            {
+                cutIndexLabel.Text = cutIndex.ToString();
+            }
+        }
+
+        private void UpdateIndex()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => indexLabel.Text = index.ToString()));
+            }
+            else
+            {
+                indexLabel.Text = index.ToString();
+            }
+        }
+
+        private void UpdateCount()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => countLabel.Text = count.ToString()));
+            }
+            else
+            {
+                countLabel.Text = count.ToString();
+            }
         }
     }
 }

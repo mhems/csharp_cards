@@ -34,6 +34,11 @@ namespace BlackjackGUI
 
         public void Prompt(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => Prompt(hand, upCard, availableActions)));
+                return;
+            }
             foreach (BlackjackActionEnum availableAction in availableActions)
             {
                 actionButtonMap[availableAction].Enabled = true;

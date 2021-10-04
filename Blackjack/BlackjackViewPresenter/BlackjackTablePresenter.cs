@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Blackjack;
 
@@ -32,7 +33,8 @@ namespace BlackjackViewPresenter
 
         private void StartRoundHandler(object _, EventArgs args)
         {
-            table.PlayRound();
+            Thread t = new(() => table.PlayRound());
+            t.Start();
         }
 
         private void RoundEndedHandler(object _, EventArgs args)
