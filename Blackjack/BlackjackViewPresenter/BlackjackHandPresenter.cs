@@ -42,12 +42,14 @@ namespace BlackjackViewPresenter
         {
             Hand.Added += CardAddedHandler;
             Hand.Cleared += HandClearedHandler;
+            Hand.HoleCardRevealed += RevealHandler;
         }
 
         public void UnregisterModel()
         {
             Hand.Added -= CardAddedHandler;
             Hand.Cleared -= HandClearedHandler;
+            Hand.HoleCardRevealed -= RevealHandler;
         }
 
         private void CardAddedHandler(object obj, CardAddedEventArgs args)
@@ -71,6 +73,11 @@ namespace BlackjackViewPresenter
         {
             view.ClearHand();
             view.Value = 0;
+        }
+
+        private void RevealHandler(object _, HoleCardRevealedEventArgs args)
+        {
+            view.RevealHoleCard();
         }
     }
 }

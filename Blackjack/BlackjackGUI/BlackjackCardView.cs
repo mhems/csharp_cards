@@ -47,7 +47,11 @@ namespace BlackjackGUI
 
         public void UpdateVisibility()
         {
-            string dir = Directory.GetCurrentDirectory();
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => UpdateVisibility()));
+                return;
+            }
             if (FaceUp)
             {
                 cardPictureBox.ImageLocation = GetCardPath();

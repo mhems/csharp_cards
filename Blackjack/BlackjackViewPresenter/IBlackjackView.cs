@@ -16,11 +16,13 @@ namespace BlackjackViewPresenter
 
     public interface IBlackjackHandView
     {
+        public bool IsDealer { get; set; }
         public int Value { get; set; }
         public bool Bust { get; set; }
         public bool Blackjack { get; set; }
         public void ClearHand();
         public void AddCard(Card card, bool visible=true);
+        public void RevealHoleCard();
     }
 
     public interface IBankView
@@ -57,6 +59,7 @@ namespace BlackjackViewPresenter
         public IBlackjackHandView[] Hands { get; }
         public IBankView InsurancePot { get; }
         public int Index { get; }
+        public bool IsDealer { get; set; }
     }
 
     public interface IBlackjackConfigView

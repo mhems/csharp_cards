@@ -67,17 +67,31 @@ namespace Blackjack
             return string.Join(", ", countMap.OrderBy(p => (int)p.Key).Select(p => $"{p.Key}={p.Value}"));
         }
 
+        public void OnHoleCardRevealed(object _, HoleCardRevealedEventArgs args)
+        {
+            AddCardToCount(args.HoleCard);
+            Changed?.Invoke(this, new EventArgs());
+        }
+
         private void DealtHandler(object _, DealtEventArgs args)
         {
-            foreach (Card card in args.DealtCards)
+            if (args.Visible)
             {
-                int value = BlackjackHand.CardValue(card);
-                foreach (BlackjackCountEnum system in countMap.Keys)
+                foreach (Card card in args.DealtCards)
                 {
-                    countMap[system] += deltaMap[system][value - 2];
+                    AddCardToCount(card);
                 }
+                Changed?.Invoke(this, new EventArgs());
             }
-            Changed?.Invoke(this, new EventArgs());
+        }
+
+        private void AddCardToCount(Card card)
+        {
+            int value = BlackjackHand.CardValue(card);
+            foreach (BlackjackCountEnum system in countMap.Keys)
+            {
+                countMap[system] += deltaMap[system][value - 2];
+            }
         }
 
         private void ShuffledHandler(object obj, EventArgs _)

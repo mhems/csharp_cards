@@ -21,12 +21,18 @@ namespace Blackjack
         public bool IsSplit { get; internal set; } = false;
         #endregion
 
+        public event EventHandler<HoleCardRevealedEventArgs> HoleCardRevealed;
+
         public BlackjackHand() { }
 
         public BlackjackHand(Card first, Card second)
         {
             Add(first);
             Add(second);
+        }
+        public void RevealHoleCard()
+        {
+            HoleCardRevealed?.Invoke(this, new HoleCardRevealedEventArgs(this[0]));
         }
 
         private int ComputeValue()
@@ -72,6 +78,15 @@ namespace Blackjack
                 }
             }
             return false;
+        }
+    }
+
+    public class HoleCardRevealedEventArgs : EventArgs
+    {
+        public Card HoleCard { get; }
+        public HoleCardRevealedEventArgs(Card holeCard)
+        {
+            HoleCard = holeCard;
         }
     }
 }

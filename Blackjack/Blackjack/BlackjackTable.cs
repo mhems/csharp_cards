@@ -31,7 +31,6 @@ namespace Blackjack
             Player = player;
         }
     }
-
     public class BlackjackTable
     {
         private static readonly HashSet<BlackjackActionEnum> dealerOptions = new()
@@ -78,7 +77,10 @@ namespace Blackjack
                 slots[i] = new BlackjackTableSlot(Config);
             }
 
-            DealerSlot = new(Config);
+            DealerSlot = new(Config)
+            {
+                IsDealer = true
+            };
             DealerSlot.Player = new BlackjackDealer(Config);
 
             HitAction hit = new(Shoe);
@@ -181,6 +183,8 @@ namespace Blackjack
                 DealerSlot.RoundEnded += logger.OnTableSlotRoundEnded;
                 DealerSlot.ActingHand += logger.OnTableSlotActingHand;
                 DealerSlot.Acting += logger.OnTableSlotActing;
+                DealerHand.HoleCardRevealed += logger.OnHoleCardRevealed;
+                DealerHand.HoleCardRevealed += Count.OnHoleCardRevealed;
 
                 if (DealerSlot.Occupied && DealerSlot.Player.DecisionPolicy != null)
                 {
@@ -285,6 +289,7 @@ namespace Blackjack
 
         private void DealDealer()
         {
+            DealerHand.RevealHoleCard();
             DealerSlot.NotifyAction();
             DealerSlot.NotifyHand();
             while (true)
@@ -359,10 +364,8 @@ namespace Blackjack
                 {
                     slot.Hand.Add(Shoe.Deal(1)[0]);
                 }
+                DealerHand.Add(Shoe.Deal(1, i != 0)[0], i != 0);
             }
-            DealerHand.Add(Shoe.Deal(1, false)[0], false);
-            DealerHand.Add(Shoe.Deal(1)[0]);
-
 
             foreach (BlackjackTableSlot slot in ActiveSlots)
             {
@@ -390,6 +393,7 @@ namespace Blackjack
         #region Properties
         public IBlackjackConfig Config { get; set; }
         public BlackjackPlayer Player { get; set; }
+        public bool IsDealer { get; set; }
         public int Index { get; set; }
         public bool Insured => InsurancePot.Balance > 0;
         public bool Surrendered { get; internal set; }

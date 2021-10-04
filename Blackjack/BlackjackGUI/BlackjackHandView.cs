@@ -19,6 +19,7 @@ namespace BlackjackGUI
         private int handValue;
         private bool bust;
         private bool blackjack;
+        private bool isDealer;
 
         public BlackjackHand Hand
         {
@@ -51,6 +52,15 @@ namespace BlackjackGUI
             {
                 blackjack = value;
                 UpdateBlackjack();
+            }
+        }
+        public bool IsDealer
+        {
+            get => isDealer;
+            set
+            {
+                isDealer = value;
+                UpdateIsDealer();
             }
         }
 
@@ -100,6 +110,28 @@ namespace BlackjackGUI
             RestoreValue();
             count = 0;
             cardTable.ColumnCount = 2;
+        }
+
+        public void RevealHoleCard()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => RevealHoleCard()));
+                return;
+            }
+            BlackjackCardView cardView = (BlackjackCardView)cardTable.GetControlFromPosition(0, 0);
+            cardView.FaceUp = true;
+            valueTextBox.Visible = true;
+        }
+
+        private void UpdateIsDealer()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => UpdateIsDealer()));
+                return;
+            }
+            valueTextBox.Visible = !IsDealer;
         }
 
         private void UpdateValue()

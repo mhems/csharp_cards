@@ -75,6 +75,10 @@ namespace Blackjack
         {
             Log($"player {args.Player} dealt hand {args.Hand} (Total={args.Hand.Value})");
         }
+        public void OnHoleCardRevealed(object _, HoleCardRevealedEventArgs args)
+        {
+            Log($"dealer revealed hole card {args.HoleCard}");
+        }
         public void OnTableSeatChanged(object _, SeatingEventArgs args) 
         {
             StringBuilder msg = new($"player {args.NewPlayer} took ");
@@ -215,10 +219,14 @@ namespace Blackjack
         }
         public void OnShoeDealt(object _, DealtEventArgs args)
         {
-            string msg = $"shoe dealt {args.DealtCards.Length}";
+            string msg = $"shoe dealt {args.DealtCards.Length} cards";
             if (args.Visible)
             {
-                msg += $" cards: {String.Join(",", args.DealtCards)}";
+                msg += $": {String.Join(",", args.DealtCards)}";
+            }
+            else
+            {
+                msg += " face down";
             }
             Log(msg);
         }

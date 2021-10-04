@@ -13,8 +13,9 @@ namespace BlackjackGUI
 {
     public partial class BlackjackTableSlotView : UserControl, IBlackjackTableSlotView
     {
-        private readonly List<IBankView> potList = new();
-        private readonly List<IBlackjackHandView> handList = new();
+        private readonly List<BankView> potList = new();
+        private readonly List<BlackjackHandView> handList = new();
+        private bool isDealer;
 
         public IBlackjackPlayerView Player => player;
         public IBankView[] Pots => potList.ToArray();
@@ -23,6 +24,15 @@ namespace BlackjackGUI
         public IBlackjackHandView Hand => handList[Index];
         public IBankView InsurancePot => insurancePot;
         public int Index { get; set; }
+        public bool IsDealer
+        {
+            get => isDealer;
+            set
+            {
+                isDealer = value;
+                UpdateIsDealer();
+            }
+        }
 
         public BlackjackTableSlotView()
         {
@@ -33,6 +43,17 @@ namespace BlackjackGUI
             BankView pot = new();
             potList.Add(pot);
             tableLayoutPanel.Controls.Add(pot, 0, 0);
+        }
+
+        private void UpdateIsDealer()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => UpdateIsDealer()));
+                return;
+            }
+            potList[0].Visible = !IsDealer;
+            insurancePot.Visible = !IsDealer;
         }
     }
 }
