@@ -20,6 +20,7 @@ namespace BlackjackGUI
         private bool bust;
         private bool blackjack;
         private bool isDealer;
+        private readonly List<BlackjackCardView> cardViews = new();
 
         public BlackjackHand Hand
         {
@@ -77,7 +78,9 @@ namespace BlackjackGUI
                 Invoke(new MethodInvoker(() => AddCard(card, visible)));
                 return;
             }
+
             BlackjackCardView cardView = CardViewFactory.GetCardView(card, visible);
+            cardViews.Add(cardView);
             if (count >= 2)
             {
                 cardTable.ColumnCount++;
@@ -96,20 +99,22 @@ namespace BlackjackGUI
                 Invoke(new MethodInvoker(() => ClearHand()));
                 return;
             }
-            for (int i = cardTable.ColumnCount - 1; i >= 0; i--)
+
+            foreach (BlackjackCardView cardView in cardViews)
             {
-                try
-                {
-                    cardTable.Controls.RemoveAt(i);
-                }
-                catch (ArgumentOutOfRangeException e)
-                {
-                    MessageBox.Show(e.StackTrace);
-                }
+                cardTable.Controls.Remove(cardView);
             }
-            RestoreValue();
+
+            cardViews.Clear();
             count = 0;
             cardTable.ColumnCount = 2;
+            cardTable.ColumnStyles[0].SizeType = SizeType.Absolute;
+            cardTable.ColumnStyles[0].Width = 20F;
+            cardTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            cardTable.ColumnStyles[1].SizeType = SizeType.Absolute;
+            cardTable.ColumnStyles[1].Width = 20F;
+            cardTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            RestoreValue();
         }
 
         public void RevealHoleCard()
@@ -119,7 +124,7 @@ namespace BlackjackGUI
                 Invoke(new MethodInvoker(() => RevealHoleCard()));
                 return;
             }
-            BlackjackCardView cardView = (BlackjackCardView)cardTable.GetControlFromPosition(0, 0);
+            BlackjackCardView cardView = cardViews[0];
             cardView.FaceUp = true;
             valueTextBox.Visible = true;
         }
