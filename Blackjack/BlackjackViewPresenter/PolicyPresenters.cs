@@ -9,95 +9,71 @@ using Cards;
 
 namespace BlackjackViewPresenter
 {
-    public interface IDecisionWaiter
-    {
-        public bool DecisionMade { get; set; }
-    }
-
-    public static class DecisionUtils
-    {
-        public static void WaitOnEvent(this IDecisionWaiter waiter)
-        {
-            // TODO: polling seems sub-optimal.
-            // there should be a library method to sync wait on an event to fire.
-            // i cannot find one though.
-            while (!waiter.DecisionMade)
-            {
-                Thread.Sleep(1);
-            }
-        }
-
-        public static EventHandler<EventArgs> GetDecisionHandler(this IDecisionWaiter waiter)
-        {
-            return new EventHandler<EventArgs>((sender, e) => waiter.DecisionMade = true);
-        }
-    }
-
-    public class InteractiveDecisionPolicy : BlackjackDecisionPolicy, IDecisionWaiter
+    public class InteractiveDecisionPolicy : BlackjackDecisionPolicy
     {
         private readonly IBlackjackDecisionView view;
-        public bool DecisionMade { get; set; }
+        private readonly AutoResetEvent are = new(false);
         public InteractiveDecisionPolicy(IBlackjackDecisionView view)
         {
             this.view = view;
-            view.DecisionMade += this.GetDecisionHandler();
+            view.Signal = are;
         }
         protected override BlackjackActionEnum DecideInner(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions)
         {
             view.Prompt(hand, upCard, availableActions);
-            this.WaitOnEvent();
+            are.WaitOne();
             return view.Action;
         }
     }
 
-    public class InteractiveBettingPolicy : BlackjackBettingPolicy, IDecisionWaiter
+    public class InteractiveBettingPolicy : BlackjackBettingPolicy
     {
         private readonly IBlackjackBetView view;
-        public bool DecisionMade { get; set; }
+        private readonly AutoResetEvent are = new(false);
         public InteractiveBettingPolicy(IBlackjackBetView view)
         {
             this.view = view;
-            view.BetMade += this.GetDecisionHandler();
+            view.Signal = are;
         }
         protected override int BetInner(int minimumBet)
         {
             view.Prompt(minimumBet);
-            this.WaitOnEvent();
+            are.WaitOne();
             return view.Bet;
         }
     }
 
-    public class InteractiveInsurancePolicy : BlackjackInsurancePolicy, IDecisionWaiter
+    public class InteractiveInsurancePolicy : BlackjackInsurancePolicy
     {
         private readonly IBlackjackInsuranceView view;
-        public bool DecisionMade { get; set; }
+        private readonly AutoResetEvent are = new(false);
         public InteractiveInsurancePolicy(IBlackjackInsuranceView view)
         {
             this.view = view;
-            view.DecisionMade += this.GetDecisionHandler();
+            view.Signal = are;
         }
         protected override bool InsureInner(BlackjackHand hand, Card upCard)
         {
             view.Prompt(hand, upCard);
-            this.WaitOnEvent();
-            return view.Insured;
+            are.WaitOne();
+            return view.Insure;
         }
     }
 
-    public class InteractiveSurrenderPolicy : BlackjackEarlySurrenderPolicy, IDecisionWaiter
+    public class InteractiveSurrenderPolicy : BlackjackEarlySurrenderPolicy
     {
         private readonly IBlackjackEarlySurrenderView view;
-        public bool DecisionMade { get; set; }
+        private readonly AutoResetEvent are = new(false);
         public InteractiveSurrenderPolicy(IBlackjackEarlySurrenderView view)
         {
             this.view = view;
-            view.DecisionMade += this.GetDecisionHandler();
+            view.Signal = are;
         }
         protected override bool SurrenderInner(BlackjackHand hand, Card upCard)
         {
             view.Prompt(hand, upCard);
-            this.WaitOnEvent();
-            return view.Surrendered;
+            are.WaitOne();
+            return view.Surrender;
         }
     }
 }

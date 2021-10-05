@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Blackjack;
@@ -17,7 +18,9 @@ namespace BlackjackGUI
     {
         private readonly Dictionary<BlackjackActionEnum, Button> actionButtonMap = new();
 
-        public event EventHandler<EventArgs> DecisionMade;
+        public BlackjackActionEnum Action { get; set; }
+        public AutoResetEvent Signal { get; set; }
+
 
         public BlackjackDecisionView()
         {
@@ -30,14 +33,11 @@ namespace BlackjackGUI
             EnableAll(false);
         }
 
-        public BlackjackActionEnum Action { get; private set; }
-
         public void Prompt(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions)
         {
             if (InvokeRequired)
             {
                 Invoke(new MethodInvoker(() => Prompt(hand, upCard, availableActions)));
-                return;
             }
             foreach (BlackjackActionEnum availableAction in availableActions)
             {
@@ -47,8 +47,8 @@ namespace BlackjackGUI
 
         private void SignalDecision()
         { 
-            DecisionMade?.Invoke(this, new EventArgs());
             EnableAll(false);
+            Signal.Set();
         }
 
         private void EnableAll(bool enable)

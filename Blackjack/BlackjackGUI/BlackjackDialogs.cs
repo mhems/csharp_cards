@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Blackjack;
@@ -12,29 +13,25 @@ namespace BlackjackGUI
 {
     public class BlackjackInsuranceDialog : IBlackjackInsuranceView
     {
-        public bool Insured { get; private set; }
-
-        public event EventHandler<EventArgs> DecisionMade;
-
+        public bool Insure { get; set; }
+        public AutoResetEvent Signal { get; set; }
         public void Prompt(BlackjackHand hand, Card upCard)
         {
-            DialogResult result = MessageBox.Show("Insurance", "Take insurance?", MessageBoxButtons.YesNo);
-            Insured = result == DialogResult.Yes;
-            DecisionMade?.Invoke(this, new EventArgs());
+            DialogResult result = MessageBox.Show("Take insurance?", "Insurance", MessageBoxButtons.YesNo);
+            Insure = result == DialogResult.Yes;
+            Signal.Set();
         }
     }
 
     public class BlackjackSurrenderDialog : IBlackjackEarlySurrenderView
     {
-        public bool Surrendered { get; private set; }
-
-        public event EventHandler<EventArgs> DecisionMade;
-
+        public bool Surrender { get; set; }
+        public AutoResetEvent Signal { get; set; }
         public void Prompt(BlackjackHand hand, Card upCard)
         {
-            DialogResult result = MessageBox.Show("Early Surrender", "Surrender early?", MessageBoxButtons.YesNo);
-            Surrendered = result == DialogResult.Yes;
-            DecisionMade?.Invoke(this, new EventArgs());
+            DialogResult result = MessageBox.Show("Surrender early?", "Early Surrender", MessageBoxButtons.YesNo);
+            Surrender = result == DialogResult.Yes;
+            Signal.Set();
         }
     }
 }

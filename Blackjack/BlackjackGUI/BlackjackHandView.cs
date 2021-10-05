@@ -69,6 +69,7 @@ namespace BlackjackGUI
         {
             InitializeComponent();
             Presenter = new BlackjackHandPresenter(this);
+            valueTextBox.Text = string.Empty;
         }
  
         public void AddCard(Card card, bool visible=true)

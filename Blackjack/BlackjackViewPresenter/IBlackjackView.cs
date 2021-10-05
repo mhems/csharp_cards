@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Cards;
 using Blackjack;
+using System.Threading;
 
 namespace BlackjackViewPresenter
 {
@@ -70,29 +71,29 @@ namespace BlackjackViewPresenter
 
     public interface IBlackjackDecisionView
     {
-        public BlackjackActionEnum Action { get; }
-        public event EventHandler<EventArgs> DecisionMade;
+        public AutoResetEvent Signal { get; set; }
+        public BlackjackActionEnum Action { get; set; }
         public void Prompt(BlackjackHand hand, Card upCard, HashSet<BlackjackActionEnum> availableActions);
     }
 
     public interface IBlackjackBetView
     {
-        public int Bet { get; }
-        public event EventHandler<EventArgs> BetMade;
+        public AutoResetEvent Signal { get; set; }
+        public int Bet { get; set; }
         public void Prompt(int minimumBet);
     }
 
     public interface IBlackjackInsuranceView
     {
-        public bool Insured { get; }
-        public event EventHandler<EventArgs> DecisionMade;
+        public AutoResetEvent Signal { get; set; }
+        public bool Insure { get; set; }
         public void Prompt(BlackjackHand hand, Card upCard);
     }
 
     public interface IBlackjackEarlySurrenderView
     {
-        public bool Surrendered { get; }
-        public event EventHandler<EventArgs> DecisionMade;
+        public AutoResetEvent Signal { get; set; }
+        public bool Surrender { get; set; }
         public void Prompt(BlackjackHand hand, Card upCard);
     }
 
