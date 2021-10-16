@@ -149,7 +149,10 @@ namespace BlackjackGUI
                 return;
             }
             valueTextBox.Text = Value.ToString();
-            valueTextBox.Visible = true;
+            if (!isDealer)
+            {
+                valueTextBox.Visible = true;
+            }
         }
 
         private void RestoreValue()
