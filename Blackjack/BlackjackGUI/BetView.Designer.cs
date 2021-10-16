@@ -47,7 +47,7 @@ namespace BlackjackGUI
             this.betButton.Name = "betButton";
             this.betButton.Size = new System.Drawing.Size(40, 23);
             this.betButton.TabIndex = 22;
-            this.betButton.Text = "Bet";
+            this.betButton.Text = "&Bet";
             this.betButton.UseVisualStyleBackColor = true;
             this.betButton.Click += new System.EventHandler(this.BetButton_Click);
             // 

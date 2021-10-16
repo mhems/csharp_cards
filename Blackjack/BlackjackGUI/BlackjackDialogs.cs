@@ -17,7 +17,7 @@ namespace BlackjackGUI
         public AutoResetEvent Signal { get; set; }
         public void Prompt(BlackjackHand hand, Card upCard)
         {
-            DialogResult result = MessageBox.Show("Take insurance?", "Insurance", MessageBoxButtons.YesNo);
+            DialogResult result = MessageBox.Show("Dealer shows an Ace.\nTake insurance?", "Insurance", MessageBoxButtons.YesNo);
             Insure = result == DialogResult.Yes;
             Signal.Set();
         }
@@ -29,7 +29,7 @@ namespace BlackjackGUI
         public AutoResetEvent Signal { get; set; }
         public void Prompt(BlackjackHand hand, Card upCard)
         {
-            DialogResult result = MessageBox.Show("Surrender early?", "Early Surrender", MessageBoxButtons.YesNo);
+            DialogResult result = MessageBox.Show("Surrender your hand early?", "Early Surrender", MessageBoxButtons.YesNo);
             Surrender = result == DialogResult.Yes;
             Signal.Set();
         }

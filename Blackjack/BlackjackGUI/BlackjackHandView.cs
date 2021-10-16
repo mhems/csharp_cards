@@ -70,6 +70,7 @@ namespace BlackjackGUI
             InitializeComponent();
             Presenter = new BlackjackHandPresenter(this);
             valueTextBox.Text = string.Empty;
+            valueTextBox.Visible = false;
         }
  
         public void AddCard(Card card, bool visible=true)
@@ -148,6 +149,7 @@ namespace BlackjackGUI
                 return;
             }
             valueTextBox.Text = Value.ToString();
+            valueTextBox.Visible = true;
         }
 
         private void RestoreValue()

@@ -247,6 +247,7 @@ namespace Blackjack
 
         private void HandleDealerBlackjack()
         {
+            DealerHand.RevealHoleCard();
             foreach (BlackjackTableSlot slot in ActiveSlots)
             {
                 if (!slot.Hand.IsNaturalBlackjack)

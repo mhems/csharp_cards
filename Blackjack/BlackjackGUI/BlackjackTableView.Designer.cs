@@ -80,7 +80,7 @@ namespace BlackjackGUI
             this.playButton.Name = "playButton";
             this.playButton.Size = new System.Drawing.Size(119, 73);
             this.playButton.TabIndex = 19;
-            this.playButton.Text = "Play";
+            this.playButton.Text = "&Play";
             this.playButton.UseVisualStyleBackColor = true;
             this.playButton.Click += new System.EventHandler(this.PlayButton_Click);
             // 
