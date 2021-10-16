@@ -80,7 +80,7 @@ namespace BlackjackViewPresenter
     {
         public AutoResetEvent Signal { get; set; }
         public int Bet { get; set; }
-        public void Prompt(int minimumBet);
+        public void Prompt(int minimumBet, int maximumBet);
     }
 
     public interface IBlackjackInsuranceView

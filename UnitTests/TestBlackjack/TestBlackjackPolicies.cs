@@ -75,7 +75,7 @@ namespace TestBlackjack
         {
             MinimumBettingPolicy policy = new();
             policy.Betting += OnBetMade;
-            Assert.AreEqual(cfg.MinimumBet, policy.Bet(cfg.MinimumBet));
+            Assert.AreEqual(cfg.MinimumBet, policy.Bet(cfg.MinimumBet, cfg.MaximumBet));
 
             Assert.IsTrue(betHandled);
             Assert.AreEqual(cfg.MinimumBet, amountBet);

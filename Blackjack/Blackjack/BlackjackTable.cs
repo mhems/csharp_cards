@@ -430,7 +430,7 @@ namespace Blackjack
 
         public void Bet()
         {
-            int amount = Player.BettingPolicy.Bet(Config.MinimumBet);
+            int amount = Player.BettingPolicy.Bet(Config.MinimumBet, Config.MaximumBet);
             if (amount < Config.MinimumBet || amount > Config.MaximumBet)
             {
                 throw new IllegalBetException(amount);
