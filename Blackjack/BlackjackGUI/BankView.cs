@@ -38,7 +38,13 @@ namespace BlackjackGUI
                 Invoke(new MethodInvoker(() => UpdateBalance()));
                 return;
             }
-            balanceLabel.Text = $"${balance}";
+            string text = string.Empty;
+            if (balance < 0)
+            {
+                text = "-";
+            }
+            text += $"${Math.Abs(balance)}";
+            balanceLabel.Text = text;
         }
     }
 }
