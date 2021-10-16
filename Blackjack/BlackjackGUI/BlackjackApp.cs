@@ -18,6 +18,12 @@ namespace BlackjackGUI
         public BlackjackApp()
         {
             InitializeComponent();
+            FormClosing += OnClosing;
+        }
+
+        public void OnClosing(object obj, EventArgs args)
+        {
+            Environment.Exit(0);
         }
     }
 }
