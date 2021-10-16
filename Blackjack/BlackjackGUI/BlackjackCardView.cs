@@ -85,6 +85,7 @@ namespace BlackjackGUI
                 BlackjackCardView view = new(card, faceUp);
                 viewMap.Add(hash, view);
             }
+            viewMap[hash].FaceUp = faceUp;
             return viewMap[hash];
 
         }
