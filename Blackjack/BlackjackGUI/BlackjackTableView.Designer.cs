@@ -117,7 +117,7 @@ namespace BlackjackGUI
             // 
             this.logView.Location = new System.Drawing.Point(700, 4);
             this.logView.Name = "logView";
-            this.logView.Size = new System.Drawing.Size(266, 573);
+            this.logView.Size = new System.Drawing.Size(266, 445);
             this.logView.TabIndex = 28;
             // 
             // BlackjackTableView
